@@ -1,0 +1,3 @@
+# lmc
+Lógicas Computacionais 
+ATIVIDADES EM SALA DE AULA USANDO NOTEBOOK LM E GOOGLE COLAB 
