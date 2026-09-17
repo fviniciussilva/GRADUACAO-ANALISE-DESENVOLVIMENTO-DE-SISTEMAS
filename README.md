@@ -4,7 +4,7 @@ Repositório destinado ao registro de matérias, atividades práticas, exercíci
 
 ---
 
-## 👨‍💻 Sobre o Estutante
+## 👨‍💻 Sobre 
 * **Nome:** Fernando Vinicius
 * **Perfil:** Estudante de ADS (4º Semestre) | Especializado em Python, IA e Desenvolvimento de Soluções Reais.
 * **GitHub:** [@fviniciussilva](https://github.com/fviniciussilva)
