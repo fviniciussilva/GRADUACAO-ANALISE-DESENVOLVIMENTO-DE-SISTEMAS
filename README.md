@@ -1,12 +1,50 @@
-## 📚 Matérias e Conteúdos
+# 🎓 Graduação em Análise e Desenvolvimento de Sistemas
 
-| Pasta | Descrição / Tecnologias |
-| :--- | :--- |
-| **Linguagem de Programação** | Exercícios práticos e fundamentos de programação. |
-| **Lógica Computacional** | Algoritmos, raciocínio lógico e estruturas básicas. |
-| **Redes de Computadores** | Conceitos de arquitetura de redes, protocolos e conectividade. |
-| **Algoritmos e Prog. Estruturada** | Estruturas condicionais, laços, funções e notebooks no Colab. |
-| **Modelagem de Dados** | Conceitos de Banco de Dados, diagramas ER e SQL. |
-## 🚀 Projetos de Destaque
-* 🏎️ **[Corrida Urbana](https://github.com/fviniciussilva/corrida-urbana):** Jogo desenvolvido em Python para apresentação acadêmica.
-* ⚽ **[Super Penalty 2026](https://github.com/fviniciussilva/super-penalty-2026):** Jogo interativo de pênaltis desenvolvido em Python.
+Repositório destinado ao registro de matérias, atividades práticas, exercícios e projetos integrados realizados durante a graduação em **Análise e Desenvolvimento de Sistemas**.
+
+---
+
+## 👨‍💻 Sobre o Estutante
+* **Nome:** Fernando Vinicius
+* **Perfil:** Estudante de ADS (4º Semestre) | Especializado em Python, IA e Desenvolvimento de Soluções Reais.
+* **GitHub:** [@fviniciussilva](https://github.com/fviniciussilva)
+
+---
+
+## 📊 Histórico Acadêmico e Grade Curricular
+
+| Semestre | Status | Principais Disciplinas | Média Destaque |
+| :--- | :---: | :--- | :---: |
+| **1º Semestre (2025.1)** | ✅ Concluído | Arquitetura de Comp., Sistemas Operacionais, Interface & Usabilidade | **9,6** (Três 10,0) |
+| **2º Semestre (2025.2)** | ✅ Concluído | Modelagem de Dados, Lógica Computacional, Telecomunicações | **9,7** (Três 10,0) |
+| **3º Semestre (2026.1)** | ✅ Concluído | Algoritmos e Prog. Estruturada, Linguagem de Prog., Análise OO, Redes | **9,0** (Dois 10,0) |
+| **4º Semestre (2026.2)** | 🔄 Em Andamento | JavaScript, POO, Engenharia de Software, Computação em Nuvem | -- |
+| **5º Semestre** | ⏳ A Cursar | Programação Web, Dev Mobile, Banco de Dados Avançado | -- |
+
+---
+
+## 📁 Estrutura de Pastas do Repositório
+
+```text
+.
+├── 01-Semestre-2025.1/
+│   ├── Arquitetura-e-Organizacao-de-Computadores/
+│   ├── Interface-e-Usabilidade/
+│   ├── Sistemas-Operacionais/
+│   └── Projeto-Integrado-I/
+├── 02-Semestre-2025.2/
+│   ├── Modelagem-de-Dados/
+│   ├── Logica-e-Matematica-Computacional/
+│   ├── Analise-e-Modelagem-de-Sistemas/
+│   └── Projeto-Integrado-II/
+├── 03-Semestre-2026.1/
+│   ├── Algoritmos-e-Programacao-Estruturada/
+│   ├── Linguagem-de-Programacao/
+│   ├── Analise-Orientada-a-Objetos/
+│   └── Redes-de-Computadores/
+├── 04-Semestre-2026.2/
+│   ├── Desenvolvimento-em-Javascript/
+│   ├── Linguagem-Orientada-a-Objetos/
+│   ├── Engenharia-de-Software/
+│   └── Computacao-em-Nuvem/
+└── 05-Semestre-Futuro/
