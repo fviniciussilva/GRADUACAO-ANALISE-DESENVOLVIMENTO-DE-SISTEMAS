@@ -22,13 +22,19 @@ Repositório destinado ao registro de matérias, atividades práticas, exercíci
 | **5º Semestre** | ⏳ A Cursar | Programação Web, Dev Mobile, Banco de Dados Avançado | -- |
 
 ---
+### 📁 Estrutura do Repositório
 
-📁 Estrutura de Pastas do Repositório
-
+```text
 .
-├── 1º SEMESTRE/                          <-- Conteúdo teórico e resumos do 1º Semestre
-├── modelagem-de-dados/                   <-- Exercícios, PDFs e Notebooks de BD
-├── LINGUAGEM-PROGRAMAÇÃO/                <-- Exercícios e códigos práticos
-├── LÓGICA-COMPUTACIONAL/                 <-- Exercícios e notebooks
-├── REDES DE COMPUTADORES/                <-- Exercícios e materiais de Redes
-└── algoritmos-programa-ao-estruturado/   <-- Notebooks do Colab e programas em Python/C
+├── 📂 1º-SEMESTRE/                           # Resumos teóricos e documentação das disciplinas do 1º Semestre
+│   ├── 🖥️ Arquitetura-e-Organizacao-de-Computadores
+│   ├── 🎨 Interface-e-Usabilidade
+│   ├── ⚙️ Sistemas-Operacionais
+│   ├── 📊 Sistemas-de-Informacao-Gerencial
+│   └── 🚀 Projeto-Integrado-I
+│
+├── 📂 modelagem-de-dados/                    # Exercícios práticos, notebooks (.ipynb) e scripts de Banco de Dados
+├── 📂 LINGUAGEM-PROGRAMAÇÃO/                 # Códigos, scripts e projetos práticos em Linguagens de Programação
+├── 📂 LÓGICA-COMPUTACIONAL/                  # Notebooks e exercícios de lógica e matemática computacional
+├── 📂 REDES-DE-COMPUTADORES/                 # Materiais, protocolos e atividades práticas de redes
+└── 📂 algoritmos-programa-ao-estruturado/    # Algoritmos, estruturas de dados e cadernos do Google Colab
