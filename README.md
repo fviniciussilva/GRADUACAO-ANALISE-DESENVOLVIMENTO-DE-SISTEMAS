@@ -23,28 +23,12 @@ Repositório destinado ao registro de matérias, atividades práticas, exercíci
 
 ---
 
-## 📁 Estrutura de Pastas do Repositório
+📁 Estrutura de Pastas do Repositório
 
-```text
 .
-├── 01-Semestre-2025.1/
-│   ├── Arquitetura-e-Organizacao-de-Computadores/
-│   ├── Interface-e-Usabilidade/
-│   ├── Sistemas-Operacionais/
-│   └── Projeto-Integrado-I/
-├── 02-Semestre-2025.2/
-│   ├── Modelagem-de-Dados/
-│   ├── Logica-e-Matematica-Computacional/
-│   ├── Analise-e-Modelagem-de-Sistemas/
-│   └── Projeto-Integrado-II/
-├── 03-Semestre-2026.1/
-│   ├── Algoritmos-e-Programacao-Estruturada/
-│   ├── Linguagem-de-Programacao/
-│   ├── Analise-Orientada-a-Objetos/
-│   └── Redes-de-Computadores/
-├── 04-Semestre-2026.2/
-│   ├── Desenvolvimento-em-Javascript/
-│   ├── Linguagem-Orientada-a-Objetos/
-│   ├── Engenharia-de-Software/
-│   └── Computacao-em-Nuvem/
-└── 05-Semestre-Futuro/
+├── 1º SEMESTRE/                          <-- Conteúdo teórico e resumos do 1º Semestre
+├── modelagem-de-dados/                   <-- Exercícios, PDFs e Notebooks de BD
+├── LINGUAGEM-PROGRAMAÇÃO/                <-- Exercícios e códigos práticos
+├── LÓGICA-COMPUTACIONAL/                 <-- Exercícios e notebooks
+├── REDES DE COMPUTADORES/                <-- Exercícios e materiais de Redes
+└── algoritmos-programa-ao-estruturado/   <-- Notebooks do Colab e programas em Python/C
