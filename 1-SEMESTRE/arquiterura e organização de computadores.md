@@ -1,0 +1,12 @@
+# 🖥️ Arquitetura e Organização de Computadores
+
+**Status:** ✅ Concluído (Média: 10,0)
+
+## 📌 O que aprendi nesta disciplina
+
+Nesta matéria, estudei os componentes fundamentais do hardware e como a CPU interage com a memória e periféricos para executar instruções:
+
+* **Unidade Central de Processamento (CPU):** Ciclo de busca, decodificação e execução de instruções, Registradores e ULA (Unidade Lógica e Aritmética).
+* **Hierarquia de Memória:** Registradores, Memória Cache (L1, L2, L3), Memória Principal (RAM) e Armazenamento Secundário.
+* **Barramentos e E/S:** Barramentos de dados, endereço e controle, além de métodos de entrada e saída (Interrupções, DMA).
+* **Sistemas de Numeração e Álgebra Booleana:** Representação binária, hexadecimal, portas lógicas e circuitos combinacionais.
