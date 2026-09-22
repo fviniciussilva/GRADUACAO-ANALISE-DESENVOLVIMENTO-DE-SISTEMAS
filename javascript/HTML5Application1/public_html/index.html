@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
+-->
+<html>
+    <head>
+        <title>Fernando Vinicius</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div>
+            <<h1>AULA 1 DE JAVASCRIPT</h1> 
+            <p id="mensagem">clicar no botão que quiser</p>
+            <p id="modificarmensagem">Mensagem inicial</p>
+            <button onclick="mudar()">clique aqui</button>
+            <button onclick="Clicou()">Primeiro Botão</button>
+            
+            <button onclick="Clicou2()">Segundo Botão</button>
+            
+            <button onclick="Clicou3 ()">terceiro botão</button>
+            
+            <script>
+               function Clicou()
+               {
+                document.getElementById("mensagem").innerHTML="Deu certo";   
+                   
+             }
+               function Clicou2()
+               { document.getElementById("mensagem").innerHTML="Deu certo denovo";}
+               
+               function Clicou3()
+               { document.getElementById("mensagem").innerHTML="DEu certo pela 3x";}
+               function mudar() {
+                   document.getElementById("modificarmensagem").innerHTML="Nova mensagem";
+               }
+                   
+              
+        
+            </script>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
+-->
+<html>
+    <head>
+        <title>EXERCICIO JS</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div>
+            <h1>DIGITE SEU NOME</h1>
+            <label>Nome: </label>
+            <input type="text" id="nome"><!-- comment -->
+            <br><!-- comment -->
+            <label>Digite sua Idade Aqui: </label>
+            <br><!-- comment -->
+            <input type="number" id="idade"><!-- comment -->
+            <button onclick="elegivel()">Teste Aqui</button>
+            <br><!-- comment -->
+            <p id="maior_idade">Status: </p>
+        
+            
+            
+        </div>
+        
+            <script>
+                function  elegivel(){
+                    let nome = document.getElementById("nome").value;
+                    let idade = number(document.getElementById("idade").value); 
+                    let maioridade;
+                    if (idade >= 18){
+                        maioridade = "Maior de Idade";   
+                    }
+                    else{
+                        maioridade = "Menor de Idade";
+                    }
+                    document.getElementById("maior_idade").innerHTML = "nome: "+nome + " idade "+idade +"<br>" + "situação:"+ maioridade;
+                    
+                    
+                    
+    }
+            </script>
+    </body>
+</html>
