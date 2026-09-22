@@ -1,0 +1,3009 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐍 Python Learning - Aprenda de Vez</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1e3c72;
+            --secondary: #2a5298;
+            --accent: #48dbfb;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --dark: #2d3748;
+            --light: #f7fafc;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--dark);
+            min-height: 100vh;
+            color: var(--light);
+        }
+
+        .app-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: #1a202c;
+            border-right: 1px solid #2d3748;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .sidebar-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .sidebar-header h1 {
+            font-size: 1.8rem;
+            color: var(--accent);
+            margin-bottom: 5px;
+        }
+
+        .sidebar-header p {
+            color: #a0aec0;
+            font-size: 0.9rem;
+        }
+
+        .phase-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .phase-item {
+            background: #2d3748;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .phase-item:hover {
+            background: #4a5568;
+        }
+
+        .phase-item.active {
+            background: #2b6cb0;
+            border-left-color: var(--accent);
+        }
+
+        .phase-item.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .phase-item.completed {
+            border-left-color: var(--success);
+        }
+
+        .phase-item.failed {
+            border-left-color: var(--danger);
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .phase-number {
+            display: inline-block;
+            width: 28px;
+            height: 28px;
+            background: var(--accent);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 28px;
+            font-weight: bold;
+            margin-right: 10px;
+            font-size: 0.9rem;
+        }
+
+        .phase-item.completed .phase-number {
+            background: var(--success);
+        }
+
+        .phase-item.failed .phase-number {
+            background: var(--danger);
+        }
+
+        .phase-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .phase-status {
+            font-size: 0.75rem;
+            margin-top: 5px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .status-locked { background: #718096; color: #fff; }
+        .status-active { background: var(--accent); color: #fff; }
+        .status-completed { background: var(--success); color: #fff; }
+        .status-failed { background: var(--danger); color: #fff; }
+
+        .progress-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #2d3748;
+            border-radius: 10px;
+        }
+
+        .progress-info h3 {
+            font-size: 0.9rem;
+            color: #a0aec0;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #4a5568;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), #667eea);
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 0.8rem;
+            color: #a0aec0;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .top-bar {
+            background: #1a202c;
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #2d3748;
+        }
+
+        .top-bar h2 {
+            font-size: 1.3rem;
+            color: var(--accent);
+        }
+
+        .top-bar-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: #38c5f0;
+        }
+
+        .btn-secondary {
+            background: #4a5568;
+            color: var(--light);
+        }
+
+        .btn-secondary:hover {
+            background: #718096;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: #fff;
+        }
+
+        .btn-danger:hover {
+            background: #c53030;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: #fff;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .content-area {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .lesson-panel {
+            width: 400px;
+            background: #1a202c;
+            border-right: 1px solid #2d3748;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .lesson-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 25px;
+        }
+
+        .lesson-title {
+            font-size: 1.5rem;
+            color: var(--accent);
+            margin-bottom: 20px;
+        }
+
+        .lesson-text {
+            color: #e2e8f0;
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+
+        .lesson-text h3 {
+            color: var(--accent);
+            margin: 20px 0 10px;
+        }
+
+        .lesson-text code {
+            background: #2d3748;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Consolas', monospace;
+            color: #68d39e;
+        }
+
+        .lesson-text pre {
+            background: #2d3748;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .lesson-text pre code {
+            background: none;
+            padding: 0;
+        }
+
+        .lesson-text ul, .lesson-text ol {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .lesson-text li {
+            margin-bottom: 8px;
+        }
+
+        .exercise-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #2d3748;
+        }
+
+        .exercise-title {
+            font-size: 1.2rem;
+            color: var(--warning);
+            margin-bottom: 15px;
+        }
+
+        .exercise-description {
+            background: #2d3748;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            color: #e2e8f0;
+        }
+
+        .error-counter {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #2d3748;
+            border-radius: 8px;
+        }
+
+        .error-counter.warning {
+            background: #2d3748;
+            border: 2px solid var(--warning);
+        }
+
+        .error-counter.danger {
+            background: #2d3748;
+            border: 2px solid var(--danger);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .error-count {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .error-count.safe { color: var(--success); }
+        .error-count.warning { color: var(--warning); }
+        .error-count.danger { color: var(--danger); }
+
+        .code-editor-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #1a202c;
+        }
+
+        .editor-header {
+            padding: 15px 20px;
+            background: #2d3748;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #4a5568;
+        }
+
+        .editor-header h3 {
+            font-size: 1rem;
+            color: var(--accent);
+        }
+
+        .editor-tabs {
+            display: flex;
+            gap: 5px;
+        }
+
+        .editor-tab {
+            padding: 5px 12px;
+            background: #4a5568;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .editor-tab.active {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .editor-body {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .code-editor {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .editor-textarea {
+            flex: 1;
+            background: #0d1117;
+            color: #e6edf3;
+            border: none;
+            padding: 20px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            resize: none;
+            outline: none;
+        }
+
+        .editor-textarea::placeholder {
+            color: #4a5568;
+        }
+
+        .editor-output {
+            width: 300px;
+            background: #0d1117;
+            border-left: 1px solid #2d3748;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .output-header {
+            padding: 10px 15px;
+            background: #2d3748;
+            font-size: 0.9rem;
+            color: var(--accent);
+            border-bottom: 1px solid #4a5568;
+        }
+
+        .output-content {
+            flex: 1;
+            padding: 15px;
+            font-family: 'Consolas', monospace;
+            font-size: 13px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            color: #e6edf3;
+        }
+
+        .output-content.error {
+            color: #fc8181;
+        }
+
+        .output-content.success {
+            color: #68d39e;
+        }
+
+        .editor-actions {
+            padding: 15px 20px;
+            background: #2d3748;
+            display: flex;
+            gap: 10px;
+            border-top: 1px solid #4a5568;
+        }
+
+        /* AI Assistant */
+        .ai-assistant {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 350px;
+            background: #1a202c;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            border: 1px solid #2d3748;
+            overflow: hidden;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .ai-assistant.minimized {
+            width: 60px;
+            overflow: hidden;
+        }
+
+        .ai-header {
+            padding: 15px;
+            background: linear-gradient(135deg, #2b6cb0, #2c5282);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .ai-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .ai-info h4 {
+            font-size: 0.95rem;
+            color: #fff;
+        }
+
+        .ai-info p {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .ai-body {
+            padding: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .ai-message {
+            background: #2d3748;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            color: #e2e8f0;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .ai-message.user {
+            background: #2b6cb0;
+            margin-left: 20px;
+        }
+
+        .ai-message.ai {
+            margin-right: 20px;
+        }
+
+        .ai-input-area {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .ai-input {
+            flex: 1;
+            padding: 10px 15px;
+            background: #2d3748;
+            border: 1px solid #4a5568;
+            border-radius: 6px;
+            color: var(--light);
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .ai-input:focus {
+            border-color: var(--accent);
+        }
+
+        .ai-send {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .ai-send:hover {
+            background: #38c5f0;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #1a202c;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .modal-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+
+        .modal-text {
+            color: #a0aec0;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .lesson-panel {
+                width: 350px;
+            }
+            .editor-output {
+                width: 250px;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .app-container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                max-height: 200px;
+            }
+            .content-area {
+                flex-direction: column;
+            }
+            .lesson-panel {
+                width: 100%;
+                height: 300px;
+                border-right: none;
+                border-bottom: 1px solid #2d3748;
+            }
+            .editor-output {
+                width: 100%;
+                height: 200px;
+                border-left: none;
+                border-top: 1px solid #2d3748;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a202c;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #4a5568;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #718096;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h1>🐍 Python Learning</h1>
+                <p>Aprenda de uma vez por todas!</p>
+            </div>
+
+            <div class="phase-list" id="phaseList">
+                <!-- Phases will be rendered by JS -->
+            </div>
+
+            <div class="progress-info">
+                <h3>📊 Progresso Geral</h3>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="stats">
+                    <span id="completedPhases">0/8 fases completadas</span>
+                    <span id="totalErrors">0 erros totais</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="top-bar">
+                <h2 id="currentPhaseTitle">Fase 1: Fundamentos Básicos</h2>
+                <div class="top-bar-actions">
+                    <button class="btn btn-secondary" onclick="resetPhase()">🔄 Reiniciar Fase</button>
+                    <button class="btn btn-danger" onclick="resetAll()">🗑️ Resetar Tudo</button>
+                </div>
+            </div>
+
+            <div class="content-area">
+                <!-- Lesson Panel -->
+                <div class="lesson-panel">
+                    <div class="lesson-content" id="lessonContent">
+                        <!-- Lesson content rendered by JS -->
+                    </div>
+                </div>
+
+                <!-- Code Editor Panel -->
+                <div class="code-editor-panel">
+                    <div class="editor-header">
+                        <h3>💻 Editor de Código</h3>
+                        <div class="editor-tabs">
+                            <span class="editor-tab active">main.py</span>
+                        </div>
+                    </div>
+                    <div class="editor-body">
+                        <div class="code-editor">
+                            <textarea class="editor-textarea" id="codeEditor" placeholder="# Escreva seu código Python aqui...
+# Exemplo: print('Hello, World!')"></textarea>
+                        </div>
+                        <div class="editor-output">
+                            <div class="output-header">📟 Saída</div>
+                            <div class="output-content" id="outputContent">
+                                Execute seu código para ver o resultado...
+                            </div>
+                        </div>
+                    </div>
+                    <div class="editor-actions">
+                        <button class="btn btn-primary" onclick="runCode()">▶️ Executar</button>
+                        <button class="btn btn-success" onclick="submitAnswer()">✅ Enviar Resposta</button>
+                        <button class="btn btn-secondary" onclick="clearCode()">🗑️ Limpar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Assistant -->
+    <div class="ai-assistant" id="aiAssistant">
+        <div class="ai-header" onclick="toggleAI()">
+            <div class="ai-avatar">🤖</div>
+            <div class="ai-info">
+                <h4>Assistente IA</h4>
+                <p>Clique para pedir ajuda</p>
+            </div>
+        </div>
+        <div class="ai-body" id="aiBody">
+            <div class="ai-message ai">
+                Olá! Eu sou seu assistente de Python. Pode me perguntar sobre:
+                • Explicações de conceitos
+                • Ajuda com exercícios
+                • Correção de código
+                • Dicas de aprendizado
+            </div>
+            <div class="ai-input-area">
+                <input type="text" class="ai-input" id="aiInput" placeholder="Pergunte algo..." onkeypress="if(event.key === 'Enter') sendAIMessage()">
+                <button class="ai-send" onclick="sendAIMessage()">Enviar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="modal-icon" id="modalIcon">🎉</div>
+            <h2 class="modal-title" id="modalTitle">Parabéns!</h2>
+            <p class="modal-text" id="modalText">Você completou a fase!</p>
+            <div class="modal-actions">
+                <button class="btn btn-primary" id="modalButton" onclick="closeModal()">Continuar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== DATA =====
+        const phases = [
+            {
+                id: 1,
+                name: "Fundamentos Básicos",
+                description: "A base de tudo! Sem pular etapas.",
+                lessons: [
+                    {
+                        title: "Bem-vindo ao Python!",
+                        content: `
+                            <h3>O que é Python?</h3>
+                            <p>Python é uma linguagem de programação de alto nível, conhecida pela sua sintaxe simples e legível. Criada por <code>Guido van Rossum</code> em 1991.</p>
+                            
+                            <h3>Por que aprender Python?</h3>
+                            <ul>
+                                <li>Sintaxe clara e fácil de ler</li>
+                                <li>Muito versátil (web, dados, IA, automação)</li>
+                                <li>Grande comunidade e muitos recursos</li>
+                                <li>Excelente para iniciantes</li>
+                            </ul>
+
+                            <h3>Sua primeira linha de código</h3>
+                            <p>Em Python, usamos <code>print()</code> para exibir texto na tela:</p>
+                            <pre><code>print("Olá, mundo!")</code></pre>
+                            <p>Isso exibirá: <code>Olá, mundo!</code></p>
+                        `
+                    },
+                    {
+                        title: "Variáveis e Tipos de Dados",
+                        content: `
+                            <h3>O que são variáveis?</h3>
+                            <p>Variáveis são como "caixas" onde armazenamos informações. Em Python, não precisa declarar o tipo explicitamente.</p>
+                            
+                            <pre><code># Exemplos de variáveis
+nome = "João"           # String (texto)
+idade = 25              # Integer (número inteiro)
+altura = 1.75           # Float (número decimal)
+estudante = True        # Boolean (verdadeiro/falso)
+
+print(nome)
+print(idade)</code></pre>
+
+                            <h3>Tipos de dados principais</h3>
+                            <ul>
+                                <li><code>str</code> - Texto (string)</li>
+                                <li><code>int</code> - Número inteiro</li>
+                                <li><code>float</code> - Número decimal</li>
+                                <li><code>bool</code> - Verdadeiro ou Falso</li>
+                            </ul>
+                        `
+                    },
+                    {
+                        title: "Operadores",
+                        content: `
+                            <h3>Operadores Aritméticos</h3>
+                            <pre><code>a = 10
+b = 3
+
+print(a + b)   # Adição: 13
+print(a - b)   # Subtração: 7
+print(a * b)   # Multiplicação: 30
+print(a / b)   # Divisão: 3.333...
+print(a // b)  # Divisão inteira: 3
+print(a % b)   # Módulo (resto): 1
+print(a ** b)  # Potência: 1000</code></pre>
+
+                            <h3>Operadores de Comparação</h3>
+                            <pre><code>x = 5
+y = 10
+
+print(x == y)   # Igual: False
+print(x != y)   # Diferente: True
+print(x > y)    # Maior: False
+print(x < y)    # Menor: True
+print(x >= 5)   # Maior ou igual: True</code></pre>
+
+                            <h3>Operadores Lógicos</h3>
+                            <pre><code># and (e), or (ou), not (não)
+print(True and False)   # False
+print(True or False)    # True
+print(not True)         # False</code></pre>
+                        `
+                    },
+                    {
+                        title: "Estruturas de Controle",
+                        content: `
+                            <h3>Condicionais (if/elif/else)</h3>
+                            <pre><code>idade = 18
+
+if idade < 18:
+    print("Menor de idade")
+elif idade == 18:
+    print("Acaba de atingir a maioridade")
+else:
+    print("Maior de idade")</code></pre>
+
+                            <h3>Loops (while e for)</h3>
+                            <pre><code># While - repete enquanto condição é verdadeira
+contador = 0
+while contador < 5:
+    print(contador)
+    contador += 1
+
+# For - itera sobre uma sequência
+for i in range(5):  # 0, 1, 2, 3, 4
+    print(i)
+
+# For com lista
+frutas = ["maçã", "banana", "laranja"]
+for fruta in frutas:
+    print(fruta)</code></pre>
+
+                            <h3>break e continue</h3>
+                            <pre><code># break - interrompe o loop
+for i in range(10):
+    if i == 5:
+        break
+    print(i)  # Imprime 0,1,2,3,4
+
+# continue - pula para a próxima iteração
+for i in range(5):
+    if i == 2:
+        continue
+    print(i)  # Imprime 0,1,3,4</code></pre>
+                        `
+                    },
+                    {
+                        title: "Funções",
+                        content: `
+                            <h3>O que são funções?</h3>
+                            <p>Funções são blocos de código reutilizáveis que realizam uma tarefa específica.</p>
+                            
+                            <pre><code># Definindo uma função
+def saudacao(nome):
+    return f"Olá, {nome}!"
+
+# Usando a função
+mensagem = saudacao("Maria")
+print(mensagem)  # Olá, Maria!
+
+# Função com múltiplos parâmetros
+def soma(a, b):
+    return a + b
+
+resultado = soma(5, 3)
+print(resultado)  # 8</code></pre>
+
+                            <h3>Parâmetros e Return</h3>
+                            <ul>
+                                <li><code>def</code> - palavra para definir uma função</li>
+                                <li>Parâmetros - valores que a função recebe</li>
+                                <li><code>return</code> - valor que a função retorna</li>
+                            </ul>
+
+                            <pre><code># Função sem return (retorna None)
+def imprimir(msg):
+    print(msg)
+
+# Função com valor padrão
+def saudacao(nome="Visitante"):
+    return f"Olá, {nome}!"
+
+print(saudacao())           # Olá, Visitante!
+print(saudacao("Ana"))      # Olá, Ana!</code></pre>
+                        `
+                    },
+                    {
+                        title: "Listas e Tuplas",
+                        content: `
+                            <h3>Listas</h3>
+                            <p>Listas são coleções ordenadas e mutáveis (podem ser alteradas).</p>
+                            
+                            <pre><code># Criando listas
+numeros = [1, 2, 3, 4, 5]
+mistura = [1, "texto", 3.14, True]
+
+# Acessando elementos
+print(numeros[0])    # 1 (primeiro elemento)
+print(numeros[-1])   # 5 (último elemento)
+
+# Modificando listas
+numeros.append(6)      # Adiciona ao final
+numeros.insert(0, 0)   # Insere na posição 0
+numeros.remove(3)      # Remove o valor 3
+
+# Fatiamento (slicing)
+print(numeros[1:4])  # [2, 3, 4]</code></pre>
+
+                            <h3>Tuplas</h3>
+                            <p>Tuplas são como listas, mas <strong>imutáveis</strong> (não podem ser alteradas após criação).</p>
+                            
+                            <pre><code>coordenadas = (10, 20)
+# coordenadas[0] = 15  # ERRO! Tuplas são imutáveis
+
+# Métodos de tuplas
+print(coordenadas.count(10))  # Conta ocorrências
+print(coordenadas.index(20))  # Retorna o índice</code></pre>
+                        `
+                    }
+                ],
+                exercises: [
+                    {
+                        id: "ex1_1",
+                        title: "Sua Primeira Saída",
+                        description: "Imprima 'Hello, World!' na tela usando print().",
+                        expectedOutput: "Hello, World!",
+                        hints: ["Use a função print()", "Coloque o texto entre aspas"]
+                    },
+                    {
+                        id: "ex1_2",
+                        title: "Variáveis e Tipos",
+                        description: "Crie uma variável chamada 'nome' com seu nome e uma variável 'idade' com sua idade, depois imprima ambas.",
+                        expectedOutput: null, // Any output is accepted
+                        hints: ["nome = 'SeuNome'", "idade = 25", "print(nome, idade)"]
+                    },
+                    {
+                        id: "ex1_3",
+                        title: "Operações Matemáticas",
+                        description: "Crie duas variáveis numéricas e imprima a soma, subtração e multiplicação delas.",
+                        expectedOutput: null,
+                        hints: ["a = 10", "b = 5", "print(a + b, a - b, a * b)"]
+                    },
+                    {
+                        id: "ex1_4",
+                        title: "Condicional Simples",
+                        description: "Crie um código que verifica se um número é positivo, negativo ou zero e imprime a mensagem correspondente.",
+                        expectedOutput: null,
+                        hints: ["Use if/elif/else", "numero = 5", "if numero > 0: print('Positivo')"]
+                    },
+                    {
+                        id: "ex1_5",
+                        title: "Loop Básico",
+                        description: "Use um loop for para imprimir os números de 1 a 10.",
+                        expectedOutput: "1\n2\n3\n4\n5\n6\n7\n8\n9\n10",
+                        hints: ["for i in range(1, 11):", "print(i)"]
+                    },
+                    {
+                        id: "ex1_6",
+                        title: "Função Simples",
+                        description: "Crie uma função chamada 'dobro' que recebe um número e retorna o dobro dele. Depois teste com o número 5.",
+                        expectedOutput: "10",
+                        hints: ["def dobro(n):", "return n * 2", "print(dobro(5))"]
+                    }
+                ]
+            },
+            {
+                id: 2,
+                name: "Estruturas de Dados",
+                description: "Dominar as estruturas é essencial",
+                lessons: [
+                    {
+                        title: "Dicionários",
+                        content: `
+                            <h3>O que são dicionários?</h3>
+                            <p>Dicionários armazenam dados em pares de <strong>chave: valor</strong>. São como um catálogo onde você busca por chave.</p>
+                            
+                            <pre><code># Criando um dicionário
+pessoa = {
+    "nome": "Ana",
+    "idade": 25,
+    "cidade": "São Paulo"
+}
+
+# Acessando valores
+print(pessoa["nome"])        # Ana
+print(pessoa.get("idade"))   # 25
+
+# Adicionando/modificando
+pessoa["email"] = "ana@email.com"
+pessoa["idade"] = 26
+
+# Removendo
+del pessoa["cidade"]</code></pre>
+
+                            <h3>Métodos úteis</h3>
+                            <pre><code>print(pessoa.keys())    # Todas as chaves
+print(pessoa.values())  # Todos os valores
+print(pessoa.items())   # Pares chave-valor
+
+# Verificando existência
+if "nome" in pessoa:
+    print("Tem nome!")</code></pre>
+                        `
+                    },
+                    {
+                        title: "Conjuntos (Sets)",
+                        content: `
+                            <h3>O que são sets?</h3>
+                            <p>Sets são coleções <strong>sem elementos duplicados</strong> e <strong>não ordenados</strong>.</p>
+                            
+                            <pre><code># Criando sets
+numeros = {1, 2, 3, 4, 5}
+letras = set("banana")  # {'b', 'a', 'n'}
+
+# Sets não permitem duplicatas
+duplicado = {1, 2, 2, 3, 3, 3}
+print(duplicado)  # {1, 2, 3}
+
+# Operações com sets
+a = {1, 2, 3, 4}
+b = {3, 4, 5, 6}
+
+print(a | b)   # União: {1,2,3,4,5,6}
+print(a & b)   # Interseção: {3,4}
+print(a - b)   # Diferença: {1,2}
+print(a ^ b)   # Diferença simétrica: {1,2,5,6}</code></pre>
+                        `
+                    },
+                    {
+                        title: "Manipulação de Strings",
+                        content: `
+                            <h3>Métodos de String</h3>
+                            <pre><code>texto = "  Olá, Mundo!  "
+
+print(texto.upper())      # "  OLÁ, MUNDO!  "
+print(texto.lower())      # "  olá, mundo!  "
+print(texto.strip())      # "Olá, Mundo!"
+print(texto.replace("Mundo", "Python"))  # "  Olá, Python!  "
+
+# Divisão e junção
+frase = "Python é incrível"
+palavras = frase.split()     # ["Python", "é", "incrível"]
+junto = "-".join(palavras)   # "Python-é-incrível"
+
+# Busca
+print(frase.find("incrível"))  # 10 (posição)
+print("Python" in frase)       # True</code></pre>
+
+                            <h3>f-strings (formatação)</h3>
+                            <pre><code>nome = "João"
+idade = 25
+print(f"Meu nome é {nome} e tenho {idade} anos")
+print(f"Daqui a 5 anos terei {idade + 5} anos")</code></pre>
+                        `
+                    },
+                    {
+                        title: "List Comprehension",
+                        content: `
+                            <h3>O que é List Comprehension?</h3>
+                            <p>Uma forma concisa de criar listas baseadas em outras listas.</p>
+                            
+                            <pre><code># Forma tradicional
+numeros = [1, 2, 3, 4, 5]
+dobros = []
+for n in numeros:
+    dobros.append(n * 2)
+print(dobros)  # [2, 4, 6, 8, 10]
+
+# Com list comprehension (mais pythonico!)
+dobros = [n * 2 for n in numeros]
+print(dobros)  # [2, 4, 6, 8, 10]</code></pre>
+
+                            <h3>Com condições</h3>
+                            <pre><code># Apenas números pares
+pares = [n for n in range(10) if n % 2 == 0]
+print(pares)  # [0, 2, 4, 6, 8]
+
+# Transformação condicional
+numeros = [1, 2, 3, 4, 5]
+par_ou_impar = ["par" if n % 2 == 0 else "impar" for n in numeros]
+print(par_ou_impar)  # ['impar', 'par', 'impar', 'par', 'impar']</code></pre>
+                        `
+                    },
+                    {
+                        title: "Trabalhando com Arquivos",
+                        content: `
+                            <h3>Lendo e Escrevendo Arquivos</h3>
+                            <pre><code># Escrevendo em arquivo
+with open("arquivo.txt", "w") as f:
+    f.write("Linha 1\n")
+    f.write("Linha 2\n")
+
+# Lendo arquivo inteiro
+with open("arquivo.txt", "r") as f:
+    conteudo = f.read()
+    print(conteudo)
+
+# Lendo linha por linha
+with open("arquivo.txt", "r") as f:
+    for linha in f:
+        print(linha.strip())</code></pre>
+
+                            <h3>Modos de abertura</h3>
+                            <ul>
+                                <li><code>"r"</code> - Leitura (default)</li>
+                                <li><code>"w"</code> - Escrita (sobrescreve)</li>
+                                <li><code>"a"</code> - Adiciona ao final</li>
+                                <li><code>"x"</code> - Cria se não existir</li>
+                            </ul>
+
+                            <p>O <code>with</code> garante que o arquivo será fechado automaticamente!</p>
+                        `
+                    },
+                    {
+                        title: "Módulos e Import",
+                        content: `
+                            <h3>Usando Módulos</h3>
+                            <p>Módulos são arquivos Python com código reutilizável. O Python tem muitos módulos built-in.</p>
+                            
+                            <pre><code># Importando módulos
+import math
+import random
+import datetime
+
+# Usando math
+print(math.sqrt(16))      # 4.0
+print(math.pi)            # 3.14159...
+
+# Usando random
+print(random.randint(1, 10))  # Número aleatório entre 1 e 10
+print(random.choice(["a", "b", "c"]))  # Escolhe um aleatório
+
+# Usando datetime
+agora = datetime.datetime.now()
+print(agora.strftime("%d/%m/%Y"))</code></pre>
+
+                            <h3>Importações específicas</h3>
+                            <pre><code>from math import sqrt, pi
+print(sqrt(25))  # 5.0
+print(pi)        # 3.14159...
+
+# Importar com alias
+import datetime as dt</code></pre>
+                        `
+                    }
+                ],
+                exercises: [
+                    {
+                        id: "ex2_1",
+                        title: "Criando um Dicionário",
+                        description: "Crie um dicionário com informações de um livro (título, autor, ano) e imprima o título.",
+                        expectedOutput: null,
+                        hints: ["livro = {'titulo': '...', 'autor': '...', 'ano': ...}", "print(livro['titulo'])"]
+                    },
+                    {
+                        id: "ex2_2",
+                        title: "Operações com Sets",
+                        description: "Crie dois sets e imprima a união e interseção deles.",
+                        expectedOutput: null,
+                        hints: ["a = {1, 2, 3}", "b = {3, 4, 5}", "print(a | b, a & b)"]
+                    },
+                    {
+                        id: "ex2_3",
+                        title: "Manipulação de Strings",
+                        description: "Receba uma string com espaços extras e transforme em uppercase, removendo os espaços.",
+                        expectedOutput: null,
+                        hints: ["texto = '  Olá  '", "print(texto.strip().upper())"]
+                    },
+                    {
+                        id: "ex2_4",
+                        title: "List Comprehension",
+                        description: "Use list comprehension para criar uma lista com os quadrados dos números de 1 a 10.",
+                        expectedOutput: "1\n4\n9\n16\n25\n36\n49\n64\n81\n100",
+                        hints: ["quadrados = [n**2 for n in range(1, 11)]", "for n in quadrados: print(n)"]
+                    },
+                    {
+                        id: "ex2_5",
+                        title: "Lendo Arquivo",
+                        description: "Crie um arquivo chamado 'dados.txt' com 3 linhas de texto e depois leia e imprima o conteúdo.",
+                        expectedOutput: null,
+                        hints: ["with open('dados.txt', 'w') as f: f.write(...)", "with open('dados.txt', 'r') as f: print(f.read())"]
+                    }
+                ]
+            },
+            {
+                id: 3,
+                name: "POO - Programação Orientada a Objetos",
+                description: "O paradigma mais usado em projetos reais",
+                lessons: [
+                    {
+                        title: "Classes e Objetos",
+                        content: `
+                            <h3>O que é POO?</h3>
+                            <p>Programação Orientada a Objetos organiza o código em <strong>objetos</strong> que combinam dados e comportamentos.</p>
+                            
+                            <h3>Classe vs Objeto</h3>
+                            <ul>
+                                <li><strong>Classe</strong>: Modelo/template (ex: "Carro")</li>
+                                <li><strong>Objeto</strong>: Instância da classe (ex: "Seu carro")</li>
+                            </ul>
+
+                            <pre><code># Definindo uma classe
+class Carro:
+    def __init__(self, marca, modelo):
+        self.marca = marca
+        self.modelo = modelo
+        self.ligado = False
+    
+    def ligar(self):
+        self.ligado = True
+        print(f"{self.marca} {self.modelo} ligado!")
+    
+    def desligar(self):
+        self.ligado = False
+        print(f"{self.marca} {self.modelo} desligado!")
+
+# Criando objetos
+carro1 = Carro("Fiat", "Uno")
+carro2 = Carro("Toyota", "Corolla")
+
+carro1.ligar()   # Fiat Uno ligado!
+carro2.ligar()   # Toyota Corolla ligado!</code></pre>
+                        `
+                    },
+                    {
+                        title: "Métodos Especiais",
+                        content: `
+                            <h3>Métodos __str__ e __repr__</h3>
+                            <p>Esses métodos definem como o objeto é representado como string.</p>
+                            
+                            <pre><code>class Pessoa:
+    def __init__(self, nome, idade):
+        self.nome = nome
+        self.idade = idade
+    
+    def __str__(self):
+        return f"{self.nome} (idade: {self.idade})"
+    
+    def __repr__(self):
+        return f"Pessoa('{self.nome}', {self.idade})"
+
+p = Pessoa("Maria", 30)
+print(p)       # Maria (idade: 30) - usa __str__
+print([p])     # [Pessoa('Maria', 30)] - usa __repr__</code></pre>
+
+                            <h3>Método __init__</h3>
+                            <p>É o <strong>construtor</strong> da classe, chamado automaticamente quando cria um objeto.</p>
+                        `
+                    },
+                    {
+                        title: "Encapsulamento",
+                        content: `
+                            <h3>Encapsulamento</h3>
+                            <p>Ocultar detalhes internos e expor apenas o necessário.</p>
+                            
+                            <pre><code>class ContaBancaria:
+    def __init__(self, titular, saldo):
+        self.titular = titular
+        self.__saldo = saldo  # Privado (convenção)
+    
+    def depositar(self, valor):
+        if valor > 0:
+            self.__saldo += valor
+            print(f"Depósito de R${valor} realizado!")
+    
+    def sacar(self, valor):
+        if valor <= self.__saldo:
+            self.__saldo -= valor
+            print(f"Saque de R${valor} realizado!")
+        else:
+            print("Saldo insuficiente!")
+    
+    def get_saldo(self):
+        return self.__saldo
+
+conta = ContaBancaria("João", 1000)
+conta.depositar(500)
+conta.sacar(200)
+print(conta.get_saldo())  # 1300
+# print(conta.__saldo)    # ERRO! Saldo é privado</code></pre>
+                        `
+                    },
+                    {
+                        title: "Herança",
+                        content: `
+                            <h3>O que é Herança?</h3>
+                            <p>Permite criar uma classe baseada em outra, herdando seus atributos e métodos.</p>
+                            
+                            <pre><code># Classe base
+class Animal:
+    def __init__(self, nome):
+        self.nome = nome
+    
+    def falar(self):
+        pass
+
+# Classes filhas
+class Cachorro(Animal):
+    def falar(self):
+        return "Au au!"
+
+class Gato(Animal):
+    def falar(self):
+        return "Miau!"
+
+# Usando
+dog = Cachorro("Rex")
+cat = Gato("Mittens")
+
+print(dog.nome)     # Rex
+print(dog.falar())  # Au au!
+print(cat.falar())  # Miau!</code></pre>
+
+                            <h3>super()</h3>
+                            <pre><code>class Animal:
+    def __init__(self, nome, idade):
+        self.nome = nome
+        self.idade = idade
+
+class Cachorro(Animal):
+    def __init__(self, nome, idade, raca):
+        super().__init__(nome, idade)  # Chama construtor da classe base
+        self.raca = raca</code></pre>
+                        `
+                    },
+                    {
+                        title: "Polimorfismo",
+                        content: `
+                            <h3>O que é Polimorfismo?</h3>
+                            <p>A capacidade de objetos diferentes responderem à mesma mensagem de formas diferentes.</p>
+                            
+                            <pre><code>class Forma:
+    def area(self):
+        pass
+
+class Circulo(Forma):
+    def __init__(self, raio):
+        self.raio = raio
+    
+    def area(self):
+        return 3.14 * self.raio ** 2
+
+class Retangulo(Forma):
+    def __init__(self, base, altura):
+        self.base = base
+        self.altura = altura
+    
+    def area(self):
+        return self.base * self.altura
+
+# Polimorfismo em ação
+formas = [Circulo(5), Retangulo(4, 6)]
+
+for forma in formas:
+    print(f"A área é: {forma.area()}")</code></pre>
+                        `
+                    },
+                    {
+                        title: "Classes Abstratas",
+                        content: `
+                            <h3>Classes Abstratas</h3>
+                            <p>Classes que não podem ser instanciadas diretamente e servem como modelo.</p>
+                            
+                            <pre><code>from abc import ABC, abstractmethod
+
+class Animal(ABC):
+    @abstractmethod
+    def falar(self):
+        pass
+    
+    @abstractmethod
+    def mover(self):
+        pass
+
+# ERRO se tentar: Animal()  # Cannot instantiate abstract class
+
+class Cachorro(Animal):
+    def falar(self):
+        return "Au au!"
+    
+    def mover(self):
+        return "Correndo..."
+
+class Peixe(Animal):
+    def falar(self):
+        return "Glub glub!"
+    
+    def mover(self):
+        return "Nadando..."
+
+# Agora pode instanciar as filhas
+dog = Cachorro()
+print(dog.falar())  # Au au!</code></pre>
+                        `
+                    }
+                ],
+                exercises: [
+                    {
+                        id: "ex3_1",
+                        title: "Sua Primeira Classe",
+                        description: "Crie uma classe 'Pessoa' com nome e idade, e um método que imprime uma apresentação.",
+                        expectedOutput: null,
+                        hints: ["class Pessoa:", "def __init__(self, nome, idade):", "def apresentar(self): print(...)"]
+                    },
+                    {
+                        id: "ex3_2",
+                        title: "Encapsulamento",
+                        description: "Crie uma classe 'Conta' com saldo privado e métodos de depósito e saque.",
+                        expectedOutput: null,
+                        hints: ["self.__saldo", "def depositar(self, valor):", "def sacar(self, valor):"]
+                    },
+                    {
+                        id: "ex3_3",
+                        title: "Herança",
+                        description: "Crie uma classe 'Veiculo' e duas filhas 'Carro' e 'Moto' com métodos específicos.",
+                        expectedOutput: null,
+                        hints: ["class Carro(Veiculo):", "super().__init__()", "def ligar(self): ..."]
+                    },
+                    {
+                        id: "ex3_4",
+                        title: "Polimorfismo",
+                        description: "Crie uma lista de diferentes formas geométricas e calcule a área de cada uma.",
+                        expectedOutput: null,
+                        hints: ["class Circulo:", "class Quadrado:", "for forma in formas: print(forma.area())"]
+                    }
+                ]
+            },
+            {
+                id: 4,
+                name: "Conceitos Avançados",
+                description: "Técnicas que separam iniciantes de profissionais",
+                lessons: [
+                    {
+                        title: "Tratamento de Erros",
+                        content: `
+                            <h3>Try/Except</h3>
+                            <p>Capturar e tratar erros para evitar que o programa quebre.</p>
+                            
+                            <pre><code># Exemplo básico
+try:
+    resultado = 10 / 0
+except ZeroDivisionError:
+    print("Não é possível dividir por zero!")
+
+# Múltiplos except
+try:
+    numero = int(input("Digite um número: "))
+    resultado = 10 / numero
+except ValueError:
+    print("Isso não é um número!")
+except ZeroDivisionError:
+    print("Não pode ser zero!")
+except:
+    print("Ocorreu um erro inesperado!")
+
+# Else e Finally
+try:
+    resultado = 10 / 2
+except:
+    print("Erro!")
+else:
+    print(f"Resultado: {resultado}")  # Só executa se não houver erro
+finally:
+    print("Isso sempre executa!")</code></pre>
+
+                            <h3>Criando exceções customizadas</h3>
+                            <pre><code>class ErroSalaCheia(Exception):
+    pass
+
+class ErroInscricaoInvalida(Exception):
+    pass
+
+raise ErroSalaCheia("A sala está cheia!")</code></pre>
+                        `
+                    },
+                    {
+                        title: "Geradores e Iteradores",
+                        content: `
+                            <h3>O que são Geradores?</h3>
+                            <p>Funções que retornam um <strong>iterador</strong>, gerando valores sob demanda (lazy evaluation).</p>
+                            
+                            <pre><code># Função geradora com yield
+def contador(n):
+    for i in range(n):
+        yield i  # Pausa e retorna o valor
+
+# Usando o gerador
+for num in contador(5):
+    print(num)  # 0, 1, 2, 3, 4
+
+# Gerador é um iterador
+gen = contador(3)
+print(next(gen))  # 0
+print(next(gen))  # 1
+print(next(gen))  # 2
+# print(next(gen))  # StopIteration</code></pre>
+
+                            <h3>Vantagens</h3>
+                            <ul>
+                                <li>Economia de memória (não carrega tudo na vez)</li>
+                                <li>Permite trabalhar com sequências infinitas</li>
+                            </ul>
+
+                            <pre><code># Gerador de Fibonacci infinito
+def fibonacci():
+    a, b = 0, 1
+    while True:
+        yield a
+        a, b = b, a + b
+
+fib = fibonacci()
+for _ in range(10):
+    print(next(fib))</code></pre>
+                        `
+                    },
+                    {
+                        title: "Decorators",
+                        content: `
+                            <h3>O que são Decorators?</h3>
+                            <p>Funções que modificam o comportamento de outras funções, sem alterar seu código.</p>
+                            
+                            <pre><code># Decorator simples
+def meu_decorator(func):
+    def wrapper():
+        print("Antes da função...")
+        func()
+        print("Depois da função...")
+    return wrapper
+
+@meu_decorator
+def saudacao():
+    print("Olá!")
+
+saudacao()
+# Antes da função...
+# Olá!
+# Depois da função...</code></pre>
+
+                            <h3>Decorator com parâmetros</h3>
+                            <pre><code>def repetir(n):
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            for _ in range(n):
+                func(*args, **kwargs)
+        return wrapper
+    return decorator
+
+@repetir(3)
+def diga_ola(nome):
+    print(f"Olá, {nome}!")
+
+diga_ola("Maria")
+# Olá, Maria!
+# Olá, Maria!
+# Olá, Maria!</code></pre>
+                        `
+                    },
+                    {
+                        title: "Lambda e Funções de Ordem Superior",
+                        content: `
+                            <h3>Funções Lambda</h3>
+                            <p>Funções anônimas e concisas, usadas para operações simples.</p>
+                            
+                            <pre><code># Lambda básico
+soma = lambda a, b: a + b
+print(soma(5, 3))  # 8
+
+# Lambda com condicional
+par = lambda n: "par" if n % 2 == 0 else "impar"
+print(par(4))  # par
+
+# Usando com funções de ordem superior
+numeros = [1, 2, 3, 4, 5]
+
+# map - aplica função a cada elemento
+dobros = list(map(lambda n: n * 2, numeros))
+print(dobros)  # [2, 4, 6, 8, 10]
+
+# filter - filtra elementos
+pares = list(filter(lambda n: n % 2 == 0, numeros))
+print(pares)  # [2, 4]
+
+# sorted com key
+pessoas = [("Ana", 25), ("Bob", 20), ("Carla", 30)]
+por_idade = sorted(pessoas, key=lambda p: p[1])
+print(por_idade)  # [('Bob', 20), ('Ana', 25), ('Carla', 30)]</code></pre>
+                        `
+                    },
+                    {
+                        title: "*args e **kwargs",
+                        content: `
+                            <h3>*args - Argumentos posicionais variáveis</h3>
+                            <pre><code>def soma_todos(*args):
+    total = 0
+    for n in args:
+        total += n
+    return total
+
+print(soma_todos(1, 2, 3))      # 6
+print(soma_todos(10, 20, 30, 40))  # 100
+
+# Desempacotamento
+def imprimir(a, b, c):
+    print(a, b, c)
+
+numeros = [1, 2, 3]
+imprimir(*numeros)  # 1 2 3</code></pre>
+
+                            <h3>**kwargs - Argumentos nomeados variáveis</h3>
+                            <pre><code>def criar_perfil(**kwargs):
+    perfil = {}
+    for chave, valor in kwargs.items():
+        perfil[chave] = valor
+    return perfil
+
+print(criar_perfil(nome="Ana", idade=25, cidade="SP"))
+# {'nome': 'Ana', 'idade': 25, 'cidade': 'SP'}
+
+# Desempacotamento
+dados = {"nome": "Bob", "idade": 30}
+print(criar_perfil(**dados))</code></pre>
+
+                            <h3>Juntos</h3>
+                            <pre><code>def func(completo, *args, **kwargs):
+    print(f"Completo: {completo}")
+    print(f"Args: {args}")
+    print(f"Kwargs: {kwargs}")
+
+func("obrigatório", 1, 2, 3, nome="Ana", idade=25)</code></pre>
+                        `
+                    },
+                    {
+                        title: "Context Managers",
+                        content: `
+                            <h3>O que são Context Managers?</h3>
+                            <p>Gerenciam recursos (arquivos, conexões) garantindo limpeza automática.</p>
+                            
+                            <pre><code># Usando with (já vimos)
+with open("arquivo.txt", "r") as f:
+    conteudo = f.read()
+# Arquivo fechado automaticamente aqui</code></pre>
+
+                            <h3>Criando seu próprio Context Manager</h3>
+                            <pre><code>class Arquivo:
+    def __init__(self, nome, modo):
+        self.nome = nome
+        self.modo = modo
+    
+    def __enter__(self):
+        self.arquivo = open(self.nome, self.modo)
+        return self.arquivo
+    
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.arquivo.close()
+
+# Usando
+with Arquivo("teste.txt", "w") as f:
+    f.write("Olá!")
+
+# Arquivo fechado automaticamente</code></pre>
+
+                            <h3>Com contextlib</h3>
+                            <pre><code>from contextlib import contextmanager
+
+@contextmanager
+def gerenciador_recurso():
+    print("Adquirindo recurso...")
+    try:
+        yield "recurso"
+    finally:
+        print("Liberando recurso...")
+
+with gerenciador_recurso() as recurso:
+    print(f"Usando: {recurso}")</code></pre>
+                        `
+                    }
+                ],
+                exercises: [
+                    {
+                        id: "ex4_1",
+                        title: "Tratamento de Erros",
+                        description: "Crie um código que pede um número ao usuário e trata erros de entrada inválida.",
+                        expectedOutput: null,
+                        hints: ["try:", "except ValueError:", "numero = int(input(...))"]
+                    },
+                    {
+                        id: "ex4_2",
+                        title: "Gerador Simples",
+                        description: "Crie um gerador que produz os primeiros n números da sequência de Fibonacci.",
+                        expectedOutput: null,
+                        hints: ["def fibonacci(n):", "yield a", "a, b = b, a + b"]
+                    },
+                    {
+                        id: "ex4_3",
+                        title: "Decorator de Timer",
+                        description: "Crie um decorator que mede o tempo de execução de uma função.",
+                        expectedOutput: null,
+                        hints: ["import time", "def timer(func):", "start = time.time()", "end = time.time()"]
+                    },
+                    {
+                        id: "ex4_4",
+                        title: "Lambda e Map",
+                        description: "Use lambda com map para converter uma lista de Celsius para Fahrenheit.",
+                        expectedOutput: null,
+                        hints: ["celsius = [0, 10, 20, 30]", "fahrenheit = list(map(lambda c: c * 9/5 + 32, celsius))"]
+                    }
+                ]
+            },
+            {
+                id: 5,
+                name: "Bibliotecas Essenciais",
+                description: "O ecossistema Python é enorme",
+                lessons: [
+                    {
+                        title: "pip e Virtual Environments",
+                        content: `
+                            <h3>Gerenciando Pacotes</h3>
+                            <p>O <code>pip</code> é o gerenciador de pacotes do Python.</p>
+                            
+                            <pre><code># Instalar pacote
+pip install requests
+
+# Instalar versão específica
+pip install requests==2.28.0
+
+# Listar pacotes instalados
+pip list
+
+# Exportar dependências
+pip freeze > requirements.txt
+
+# Instalar de requirements.txt
+pip install -r requirements.txt</code></pre>
+
+                            <h3>Virtual Environments</h3>
+                            <p>Ambientes isolados para cada projeto, evitando conflitos.</p>
+                            
+                            <pre><code># Criar ambiente
+python -m venv meu_env
+
+# Ativar (Windows)
+meu_env\\Scripts\\activate
+
+# Ativar (Linux/Mac)
+source meu_env/bin/activate
+
+# Desativar
+deactivate</code></pre>
+                        `
+                    },
+                    {
+                        title: "Requests - HTTP",
+                        content: `
+                            <h3>Fazendo Requisições HTTP</h3>
+                            <p>A biblioteca <code>requests</code> é a maneira mais simples de trabalhar com APIs.</p>
+                            
+                            <pre><code>import requests
+
+# GET - buscar dados
+resposta = requests.get("https://api.exemplo.com/usuarios")
+print(resposta.status_code)  # 200
+print(resposta.json())       # Dados em JSON
+
+# GET com parâmetros
+resposta = requests.get("https://api.exemplo.com/busca", 
+                       params={"q": "python", "limit": 10})
+
+# POST - enviar dados
+dados = {"nome": "Ana", "idade": 25}
+resposta = requests.post("https://api.exemplo.com/usuarios", 
+                        json=dados)
+print(resposta.json())
+
+# Headers personalizados
+headers = {"Authorization": "Bearer TOKEN"}
+resposta = requests.get("https://api.exemplo.com/protegido", 
+                       headers=headers)</code></pre>
+                        `
+                    },
+                    {
+                        title: "JSON",
+                        content: `
+                            <h3>Trabalhando com JSON</h3>
+                            <p>JSON é o formato padrão para dados em APIs web.</p>
+                            
+                            <pre><code>import json
+
+# Python para JSON (serialização)
+dados = {
+    "nome": "Ana",
+    "idade": 25,
+    "hobbies": ["leitura", "musica"]
+}
+
+json_string = json.dumps(dados)
+print(json_string)
+# {"nome": "Ana", "idade": 25, "hobbies": ["leitura", "musica"]}
+
+# JSON para Python (deserialização)
+dados_python = json.loads(json_string)
+print(dados_python["nome"])  # Ana
+
+# Lendo de arquivo JSON
+with open("dados.json", "r") as f:
+    dados = json.load(f)
+
+# Escrevendo em arquivo JSON
+with open("dados.json", "w") as f:
+    json.dump(dados, f, indent=2)</code></pre>
+                        `
+                    },
+                    {
+                        title: "NumPy",
+                        content: `
+                            <h3>O que é NumPy?</h3>
+                            <p>Biblioteca para computação numérica com arrays eficientes.</p>
+                            
+                            <pre><code>import numpy as np
+
+# Criando arrays
+arr = np.array([1, 2, 3, 4, 5])
+print(arr)           # [1 2 3 4 5]
+print(arr * 2)       # [2 4 6 8 10] - operação vetorial!
+
+# Arrays multidimensionais
+matriz = np.array([[1, 2], [3, 4]])
+print(matriz.shape)  # (2, 2)
+
+# Operações matemáticas
+print(np.sum(arr))      # 15
+print(np.mean(arr))     # 3.0
+print(np.max(arr))      # 5
+print(np.min(arr))      # 1
+
+# Criando arrays especiais
+zeros = np.zeros(5)         # [0 0 0 0 0]
+ones = np.ones((3, 3))      # matriz 3x3 de uns
+range_array = np.arange(0, 10, 2)  # [0 2 4 6 8]</code></pre>
+                        `
+                    },
+                    {
+                        title: "Pandas",
+                        content: `
+                            <h3>O que é Pandas?</h3>
+                            <p>Biblioteca para manipulação e análise de dados tabulares.</p>
+                            
+                            <pre><code>import pandas as pd
+
+# Criando DataFrame
+dados = {
+    "Nome": ["Ana", "Bob", "Carla"],
+    "Idade": [25, 30, 28],
+    "Cidade": ["SP", "RJ", "BH"]
+}
+df = pd.DataFrame(dados)
+print(df)
+
+# Selecionando dados
+print(df["Nome"])          # Coluna
+print(df.loc[0])           # Linha por índice
+print(df[df["Idade"] > 25])  # Filtro
+
+# Operações
+print(df["Idade"].mean())  # Média
+print(df.describe())       # Estatísticas</code></pre>
+                        `
+                    },
+                    {
+                        title: "Matplotlib",
+                        content: `
+                            <h3>Visualização de Dados</h3>
+                            <p>Biblioteca para criar gráficos e visualizações.</p>
+                            
+                            <pre><code>import matplotlib.pyplot as plt
+import numpy as np
+
+# Gráfico de linha
+x = np.linspace(0, 10, 100)
+y = np.sin(x)
+
+plt.plot(x, y)
+plt.title("Seno")
+plt.xlabel("X")
+plt.ylabel("Y")
+plt.show()
+
+# Gráfico de barras
+categorias = ["A", "B", "C", "D"]
+valores = [10, 20, 15, 25]
+
+plt.bar(categorias, valores)
+plt.title("Valores por Categoria")
+plt.show()
+
+# Gráfico de dispersão
+x = np.random.randn(100)
+y = np.random.randn(100)
+
+plt.scatter(x, y)
+plt.title("Scatter Plot")
+plt.show()</code></pre>
+                        `
+                    }
+                ],
+                exercises: [
+                    {
+                        id: "ex5_1",
+                        title: "Usando Requests",
+                        description: "Use a API pública JSONPlaceholder para buscar todos os usuários e imprimir os nomes.",
+                        expectedOutput: null,
+                        hints: ["import requests", "resposta = requests.get('https://jsonplaceholder.typicode.com/users')", "for usuario in resposta.json(): print(usuario['name'])"]
+                    },
+                    {
+                        id: "ex5_2",
+                        title: "JSON",
+                        description: "Crie um dicionário com dados de um produto e salve em um arquivo JSON.",
+                        expectedOutput: null,
+                        hints: ["import json", "dados = {'nome': '...', 'preco': ...}", "with open('produto.json', 'w') as f: json.dump(dados, f)"]
+                    },
+                    {
+                        id: "ex5_3",
+                        title: "NumPy Básico",
+                        description: "Crie um array NumPy com 10 elementos e imprima a soma, média e os valores maiores que 5.",
+                        expectedOutput: null,
+                        hints: ["import numpy as np", "arr = np.array([...])", "print(np.sum(arr), np.mean(arr))", "print(arr[arr > 5])"]
+                    },
+                    {
+                        id: "ex5_4",
+                        title: "Pandas",
+                        description: "Crie um DataFrame com dados de alunos (nome, nota) e imprima a média das notas.",
+                        expectedOutput: null,
+                        hints: ["import pandas as pd", "df = pd.DataFrame({'nome': [...], 'nota': [...]})", "print(df['nota'].mean())"]
+                    }
+                ]
+            },
+            {
+                id: 6,
+                name: "Desenvolvimento Web",
+                description: "Crie aplicações web com Python",
+                lessons: [
+                    {
+                        title: "Flask - Introdução",
+                        content: `
+                            <h3>O que é Flask?</h3>
+                            <p>Flask é um framework web leve e flexível para Python.</p>
+                            
+                            <pre><code># Instalação
+# pip install flask
+
+# App básico
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.route("/")
+def home():
+    return "Bem-vindo à minha página!"
+
+@app.route("/ola/<nome>")
+def ola(nome):
+    return f"Olá, {nome}!"
+
+if __name__ == "__main__":
+    app.run(debug=True)</code></pre>
+
+                            <h3>Templates HTML</h3>
+                            <pre><code>from flask import render_template
+
+@app.route("/")
+def home():
+    return render_template("index.html", titulo="Página Inicial")</code></pre>
+                        `
+                    },
+                    {
+                        title: "Django - Introdução",
+                        content: `
+                            <h3>O que é Django?</h3>
+                            <p>Framework web completo, com "batteries included".</p>
+                            
+                            <pre><code># Instalação
+# pip install django
+
+# Criar projeto
+django-admin startproject meu_projeto
+
+# Criar app
+python manage.py startapp minha_app
+
+# Estrutura básica
+# meu_projeto/
+#   ├── manage.py
+#   └── meu_projeto/
+#       ├── __init__.py
+#       ├── settings.py
+#       ├── urls.py
+#       └── wsgi.py</code></pre>
+
+                            <h3>Models (Banco de Dados)</h3>
+                            <pre><code>from django.db import models
+
+class Produto(models.Model):
+    nome = models.CharField(max_length=100)
+    preco = models.DecimalField(max_digits=10, decimal_places=2)
+    estoque = models.IntegerField(default=0)
+    
+    def __str__(self):
+        return self.nome</code></pre>
+                        `
+                    },
+                    {
+                        title: "APIs REST com FastAPI",
+                        content: `
+                            <h3>O que é FastAPI?</h3>
+                            <p>Framework moderno para criar APIs REST rápidas e com validação automática.</p>
+                            
+                            <pre><code># Instalação
+# pip install fastapi uvicorn
+
+from fastapi import FastAPI
+from pydantic import BaseModel
+
+app = FastAPI()
+
+class Item(BaseModel):
+    nome: str
+    preco: float
+    desconto: bool = False
+
+@app.get("/")
+def read_root():
+    return {"mensagem": "API funcionando!"}
+
+@app.get("/items/{item_id}")
+def read_item(item_id: int, q: str = None):
+    return {"item_id": item_id, "q": q}
+
+@app.post("/items/")
+def create_item(item: Item):
+    return item</code></pre>
+
+                            <h3>Executando</h3>
+                            <pre><code>uvicorn main:app --reload</code></pre>
+                        `
+                    },
+                    {
+                        title: "HTML e CSS Básico",
+                        content: `
+                            <h3>Estrutura HTML</h3>
+                            <pre><code><!DOCTYPE html>
+<html>
+<head>
+    <title>Minha Página</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Título</h1>
+    <p>Um parágrafo</p>
+    <form>
+        <input type="text" name="nome">
+        <button type="submit">Enviar</button>
+    </form>
+</body>
+</html></code></pre>
+
+                            <h3>CSS Básico</h3>
+                            <pre><code>/* style.css */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+}
+
+h1 {
+    color: #333;
+    text-align: center;
+}
+
+.formulario {
+    background: #f0f0f0;
+    padding: 20px;
+    border-radius: 8px;
+}</code></pre>
+                        `
+                    },
+                    {
+                        title: "JavaScript Básico",
+                        content: `
+                            <h3>Interatividade no Frontend</h3>
+                            <pre><code>// Selecionando elementos
+const botao = document.querySelector("#meuBotao");
+const texto = document.querySelector("#texto");
+
+// Eventos
+botao.addEventListener("click", function() {
+    texto.textContent = "Botão clicado!";
+    texto.style.color = "blue";
+});
+
+// Fetch API (chamar backend)
+fetch("/api/dados")
+    .then(response => response.json())
+    .then(data => console.log(data))
+    .catch(error => console.error(error));
+
+// Manipulando DOM
+const lista = document.querySelector("#lista");
+const item = document.createElement("li");
+item.textContent = "Novo item";
+lista.appendChild(item);</code></pre>
+                        `
+                    },
+                    {
+                        title: "Banco de Dados",
+                        content: `
+                            <h3>SQL Básico</h3>
+                            <pre><code>-- Criar tabela
+CREATE TABLE usuarios (
+    id INTEGER PRIMARY KEY,
+    nome TEXT NOT NULL,
+    email TEXT UNIQUE,
+    idade INTEGER
+);
+
+-- Inserir dados
+INSERT INTO usuarios (nome, email, idade)
+VALUES ('Ana', 'ana@email.com', 25);
+
+-- Consultar
+SELECT * FROM usuarios;
+SELECT nome, idade FROM usuarios WHERE idade > 20;
+SELECT COUNT(*) FROM usuarios;
+
+-- Atualizar
+UPDATE usuarios SET idade = 26 WHERE nome = 'Ana';
+
+-- Deletar
+DELETE FROM usuarios WHERE id = 1;</code></pre>
+
+                            <h3>Python + SQLite</h3>
+                            <pre><code>import sqlite3
+
+conn = sqlite3.connect("meu_banco.db")
+cursor = conn.cursor()
+
+# Criar tabela
+cursor.execute("""
+    CREATE TABLE IF NOT EXISTS usuarios (
+        id INTEGER PRIMARY KEY,
+        nome TEXT
+    )
+""")
+
+# Inserir
+cursor.execute("INSERT INTO usuarios (nome) VALUES (?)", ("Ana",))
+conn.commit()
+
+# Consultar
+cursor.execute("SELECT * FROM usuarios")
+print(cursor.fetchall())
+
+conn.close()</code></pre>
+                        `
+                    }
+                ],
+                exercises: [
+                    {
+                        id: "ex6_1",
+                        title: "API com Requests",
+                        description: "Consuma a API JSONPlaceholder e crie uma lista com todos os títulos dos posts.",
+                        expectedOutput: null,
+                        hints: ["import requests", "posts = requests.get('https://jsonplaceholder.typicode.com/posts').json()", "for post in posts: print(post['title'])"]
+                    },
+                    {
+                        id: "ex6_2",
+                        title: "SQL Básico",
+                        description: "Crie uma tabela 'produtos' com nome e preco, insira 3 produtos e consulte os mais caros.",
+                        expectedOutput: null,
+                        hints: ["import sqlite3", "CREATE TABLE produtos (nome TEXT, preco REAL)", "INSERT INTO produtos VALUES ('...', ...)", "SELECT * FROM produtos ORDER BY preco DESC"]
+                    }
+                ]
+            },
+            {
+                id: 7,
+                name: "Teste, Qualidade e DevOps",
+                description: "Escreva código profissional e confiável",
+                lessons: [
+                    {
+                        title: "Testing com pytest",
+                        content: `
+                            <h3>Por que testar?</h3>
+                            <p>Testes garantem que seu código funciona e continua funcionando após mudanças.</p>
+                            
+                            <pre><code># Instalação
+# pip install pytest
+
+# test_calc.py
+def soma(a, b):
+    return a + b
+
+def test_soma():
+    assert soma(2, 3) == 5
+    assert soma(-1, 1) == 0
+    assert soma(0, 0) == 0
+
+def test_soma_tipo_errado():
+    with pytest.raises(TypeError):
+        soma("2", 3)</code></pre>
+
+                            <h3>Executando testes</h3>
+                            <pre><code>pytest                    # Executa todos os testes
+pytest -v                 # Modo verboso
+pytest test_calc.py       # Arquivo específico
+pytest --cov=.            # Cobertura de código</code></pre>
+                        `
+                    },
+                    {
+                        title: "Type Hinting",
+                        content: `
+                            <h3>Anotação de Tipos</h3>
+                            <p>Melhora a legibilidade e permite verificação de tipos.</p>
+                            
+                            <pre><code>from typing import List, Optional, Dict
+
+# Funções com type hints
+def soma(a: int, b: int) -> int:
+    return a + b
+
+def processar_nomes(nomes: List[str]) -> List[str]:
+    return [nome.upper() for nome in nomes]
+
+# Tipos opcionais
+def buscar_usuario(id: int) -> Optional[dict]:
+    if id > 0:
+        return {"id": id, "nome": "Ana"}
+    return None
+
+# Dicionários tipados
+def contar_palavras(texto: str) -> Dict[str, int]:
+    palavras = texto.split()
+    return {palavra: palavras.count(palavra) for palavra in set(palavras)}</code></pre>
+
+                            <h3>Mypy</h3>
+                            <pre><code># pip install mypy
+mypy meu_codigo.py  # Verifica tipos</code></pre>
+                        `
+                    },
+                    {
+                        title: "Debugging",
+                        content: `
+                            <h3>pdb - Python Debugger</h3>
+                            <pre><code>import pdb
+
+def calcular(a, b):
+    resultado = a + b
+    pdb.set_trace()  # Ponto de breakpoint
+    return resultado * 2
+
+calcular(5, 3)</code></pre>
+
+                            <h3>Comandos do pdb</h3>
+                            <ul>
+                                <li><code>n</code> (next) - próxima linha</li>
+                                <li><code>c</code> (continue) - continua execução</li>
+                                <li><code>p variavel</code> - imprime valor</li>
+                                <li><code>l</code> (list) - mostra código</li>
+                                <li><code>q</code> (quit) - sai do debugger</li>
+                            </ul>
+
+                            <h3>Debug no VS Code</h3>
+                            <p>Use breakpoints clicando na margem esquerda do editor. Execute em "Debug Mode".</p>
+                        `
+                    },
+                    {
+                        title: "Git e Versionamento",
+                        content: `
+                            <h3>Comandos Básicos</h3>
+                            <pre><code># Configurar
+git config --global user.name "Seu Nome"
+git config --global user.email "seu@email.com"
+
+# Iniciar repositório
+git init
+
+# Status e adição
+git status
+git add arquivo.py
+git add .  # Todos os arquivos
+
+# Commit
+git commit -m "Adiciona funcionalidade X"
+
+# Branches
+git branch nova-feature     # Criar branch
+git checkout nova-feature   # Mudar de branch
+git checkout -b nova-branch # Criar e mudar
+
+# Push e Pull
+git push origin main
+git pull origin main</code></pre>
+
+                            <h3>Fluxo de trabalho</h3>
+                            <pre><code>git checkout main
+git pull origin main
+git checkout -b minha-feature
+# ... trabalha ...
+git add .
+git commit -m "Descrição"
+git push origin minha-feature
+# Cria Pull Request no GitHub</code></pre>
+                        `
+                    },
+                    {
+                        title: "CI/CD com GitHub Actions",
+                        content: `
+                            <h3>O que é CI/CD?</h3>
+                            <p>Integração e Entrega Contínua - automatiza testes e deploy.</p>
+                            
+                            <pre><code># .github/workflows/python-tests.yml
+name: Python Tests
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+      
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pytest
+      
+      - name: Run tests
+        run: pytest</code></pre>
+                        `
+                    },
+                    {
+                        title: "Docker Básico",
+                        content: `
+                            <h3>O que é Docker?</h3>
+                            <p>Plataforma para criar, executar e gerenciar containers.</p>
+                            
+                            <pre><code># Dockerfile para Python
+FROM python:3.9-slim
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+CMD ["python", "app.py"]</code></pre>
+
+                            <h3>Comandos</h3>
+                            <pre><code># Construir imagem
+docker build -t minha-app .
+
+# Executar container
+docker run -p 8000:8000 minha-app
+
+# Listar containers
+docker ps
+
+# Parar container
+docker stop container_id</code></pre>
+
+                            <h3>docker-compose</h3>
+                            <pre><code># docker-compose.yml
+version: '3'
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app</code></pre>
+                        `
+                    }
+                ],
+                exercises: [
+                    {
+                        id: "ex7_1",
+                        title: "Testes com pytest",
+                        description: "Crie uma função de calculadora (soma, subtração) e escreva testes para ela.",
+                        expectedOutput: null,
+                        hints: ["def soma(a, b): return a + b", "def test_soma(): assert soma(2, 3) == 5", "Execute: pytest"]
+                    },
+                    {
+                        id: "ex7_2",
+                        title: "Type Hinting",
+                        description: "Refatore uma função para adicionar type hints adequados.",
+                        expectedOutput: null,
+                        hints: ["def processar(lista: List[int]) -> int:", "from typing import List"]
+                    }
+                ]
+            },
+            {
+                id: 8,
+                name: "Especialização",
+                description: "Escolha sua área e aprofunde!",
+                lessons: [
+                    {
+                        title: "Escolhendo sua Especialização",
+                        content: `
+                            <h3>Áreas de Atuação com Python</h3>
+                            
+                            <h4>📊 Data Science & Machine Learning</h4>
+                            <ul>
+                                <li>Análise de dados com Pandas</li>
+                                <li>Visualização com Matplotlib/Seaborn</li>
+                                <li>Machine Learning com Scikit-learn</li>
+                                <li>Deep Learning com TensorFlow/PyTorch</li>
+                            </ul>
+
+                            <h4>🌐 Web Development</h4>
+                            <ul>
+                                <li>APIs REST com FastAPI/Django REST</li>
+                                <li>Aplicações web com Flask/Django</li>
+                                <li>Microserviços</li>
+                                <li>Autenticação e segurança</li>
+                            </ul>
+
+                            <h4>🤖 Automação</h4>
+                            <ul>
+                                <li>Web scraping com BeautifulSoup/Selenium</li>
+                                <li>Automação de tarefas</li>
+                                <li>RPA (Robotic Process Automation)</li>
+                            </ul>
+
+                            <h4>🎮 Desenvolvimento de Jogos</h4>
+                            <ul>
+                                <li>Jogos 2D com Pygame</li>
+                                <li>Prototipagem rápida</li>
+                            </ul>
+
+                            <h4>☁️ DevOps & Cloud</h4>
+                            <ul>
+                                <li>Automação de infraestrutura</li>
+                                <li>Scripts de deploy</li>
+                                <li>Monitoramento</li>
+                            </ul>
+                        `
+                    }
+                ],
+                exercises: [
+                    {
+                        id: "ex8_1",
+                        title: "Projeto Final",
+                        description: "Escolha uma área e crie um projeto completo. Exemplos: API REST, análise de dados, scraper web, jogo simples.",
+                        expectedOutput: null,
+                        hints: ["Defina o escopo do projeto", "Crie um repositório no GitHub", "Documente seu projeto"]
+                    }
+                ]
+            }
+        ];
+
+        // ===== STATE =====
+        let currentPhaseIndex = 0;
+        let currentLessonIndex = 0;
+        let currentExerciseIndex = 0;
+        let errorsInPhase = 0;
+        let phaseStates = {}; // { phaseId: { completed: bool, failed: bool, errors: int } }
+
+        // ===== INITIALIZATION =====
+        function init() {
+            loadState();
+            renderPhaseList();
+            loadPhase(0);
+            updateProgress();
+        }
+
+        function loadState() {
+            const saved = localStorage.getItem('pythonLearningState');
+            if (saved) {
+                const state = JSON.parse(saved);
+                phaseStates = state.phaseStates || {};
+                currentPhaseIndex = state.currentPhaseIndex || 0;
+            }
+        }
+
+        function saveState() {
+            localStorage.setItem('pythonLearningState', JSON.stringify({
+                phaseStates,
+                currentPhaseIndex
+            }));
+        }
+
+        // ===== RENDER FUNCTIONS =====
+        function renderPhaseList() {
+            const list = document.getElementById('phaseList');
+            list.innerHTML = phases.map((phase, index) => {
+                const state = phaseStates[phase.id] || {};
+                const isActive = index === currentPhaseIndex;
+                const isLocked = index > 0 && !phaseStates[phases[index - 1].id]?.completed;
+                const statusClass = state.completed ? 'completed' : 
+                                   state.failed ? 'failed' : 
+                                   isActive ? 'active' : '';
+                const statusText = state.completed ? '✅ Completo' :
+                                  state.failed ? '❌ Falhou' :
+                                  isActive ? '📖 Em progresso' :
+                                  isLocked ? '🔒 Bloqueado' : '⏳ Não iniciado';
+
+                return `
+                    <div class="phase-item ${statusClass} ${isLocked ? 'locked' : ''}"
+                         onclick="${isLocked || isActive ? '' : `selectPhase(${index})`}">
+                        <div style="display: flex; align-items: center;">
+                            <div class="phase-number">${phase.id}</div>
+                            <div class="phase-name">${phase.name}</div>
+                        </div>
+                        <div class="phase-status ${statusClass === 'active' ? 'status-active' : 
+                                              statusClass === 'completed' ? 'status-completed' :
+                                              statusClass === 'failed' ? 'status-failed' : 'status-locked'}">
+                            ${statusText}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function loadPhase(index) {
+            if (index < 0 || index >= phases.length) return;
+            
+            // Verificar se fase anterior está completa (exceto fase 1)
+            if (index > 0) {
+                const prevPhase = phases[index - 1];
+                if (!phaseStates[prevPhase.id]?.completed) {
+                    showModal('🔒', 'Fase Bloqueada', 
+                        'Complete a fase anterior para desbloquear esta fase!');
+                    return;
+                }
+            }
+
+            currentPhaseIndex = index;
+            currentLessonIndex = 0;
+            currentExerciseIndex = 0;
+            errorsInPhase = phaseStates[phases[index].id]?.errors || 0;
+            
+            renderPhaseList();
+            renderLesson();
+            updateProgress();
+            saveState();
+        }
+
+        function selectPhase(index) {
+            loadPhase(index);
+        }
+
+        function renderLesson() {
+            const phase = phases[currentPhaseIndex];
+            const lesson = phase.lessons[currentLessonIndex];
+            const exercise = phase.exercises[currentExerciseIndex];
+            
+            document.getElementById('currentPhaseTitle').textContent = 
+                `Fase ${phase.id}: ${phase.name}`;
+            
+            const lessonContent = document.getElementById('lessonContent');
+            lessonContent.innerHTML = `
+                <div class="lesson-title">${lesson.title}</div>
+                <div class="lesson-text">${lesson.content}</div>
+                
+                <div class="exercise-section">
+                    <div class="exercise-title">📝 Exercício ${currentExerciseIndex + 1}/${phase.exercises.length}</div>
+                    <div class="exercise-description">
+                        <strong>${exercise.title}</strong>
+                        <p>${exercise.description}</p>
+                    </div>
+                    
+                    <div class="error-counter ${errorsInPhase >= 3 ? 'danger' : errorsInPhase >= 2 ? 'warning' : ''}">
+                        <span>❌ Erros nesta fase:</span>
+                        <span class="error-count ${errorsInPhase >= 3 ? 'danger' : errorsInPhase >= 2 ? 'warning' : 'safe'}">
+                            ${errorsInPhase}/3
+                        </span>
+                        ${errorsInPhase >= 3 ? '<p><strong style="color: var(--danger)">⚠️ Você errou 3 vezes! Esta fase será reiniciada.</strong></p>' : ''}
+                    </div>
+                    
+                    <div style="margin-top: 15px;">
+                        <button class="btn btn-secondary" onclick="prevExercise()" ${currentExerciseIndex === 0 ? 'disabled' : ''}>
+                            ◀ Anterior
+                        </button>
+                        <span style="flex: 1; text-align: center; color: #a0aec0; font-size: 0.9rem;">
+                            Dica: ${exercise.hints[currentExerciseIndex % exercise.hints.length]}
+                        </span>
+                        <button class="btn btn-secondary" onclick="nextExercise()" 
+                                ${currentExerciseIndex >= phase.exercises.length - 1 ? 'disabled' : ''}>
+                            Próximo ▶
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ===== CODE EXECUTION =====
+        function runCode() {
+            const code = document.getElementById('codeEditor').value;
+            const output = document.getElementById('outputContent');
+            
+            output.textContent = 'Executando...\n';
+            output.className = 'output-content';
+            
+            try {
+                // Criar sandbox de execução
+                const logs = [];
+                const originalConsole = console;
+                
+                const mockConsole = {
+                    log: (...args) => logs.push(args.map(a => 
+                        typeof a === 'object' ? JSON.stringify(a, null, 2) : String(a)
+                    ).join(' ')),
+                    error: (...args) => logs.push('[ERRO] ' + args.map(a => String(a)).join(' ')),
+                    warn: (...args) => logs.push('[AVISO] ' + args.map(a => String(a)).join(' '))
+                };
+                
+                // Executar código em sandbox
+                const executor = new Function('console', 'print', 'input', code);
+                executor(mockConsole, mockConsole.log, mockConsole.log);
+                
+                output.textContent = logs.join('\n') || 'Código executado sem saída.';
+                output.className = 'output-content success';
+            } catch (error) {
+                output.textContent = `Erro: ${error.message}`;
+                output.className = 'output-content error';
+            }
+        }
+
+        function clearCode() {
+            document.getElementById('codeEditor').value = '';
+            document.getElementById('outputContent').textContent = 'Editor limpo.';
+            document.getElementById('outputContent').className = 'output-content';
+        }
+
+        // ===== EXERCISE SUBMISSION =====
+        function submitAnswer() {
+            const phase = phases[currentPhaseIndex];
+            const exercise = phase.exercises[currentExerciseIndex];
+            const code = document.getElementById('codeEditor').value;
+            const output = document.getElementById('outputContent');
+            
+            // Executar o código do usuário
+            let userOutput = '';
+            try {
+                const logs = [];
+                const mockConsole = {
+                    log: (...args) => logs.push(args.map(a => 
+                        typeof a === 'object' ? JSON.stringify(a, null, 2) : String(a)
+                    ).join(' ')),
+                    error: (...args) => logs.push('[ERRO] ' + args.map(a => String(a)).join(' '))
+                };
+                
+                const executor = new Function('console', 'print', 'input', code);
+                executor(mockConsole, mockConsole.log, mockConsole.log);
+                
+                userOutput = logs.join('\n');
+            } catch (error) {
+                output.textContent = `Erro no código: ${error.message}`;
+                output.className = 'output-content error';
+                return;
+            }
+            
+            // Verificar resposta
+            const isCorrect = checkAnswer(exercise, userOutput);
+            
+            if (isCorrect) {
+                output.textContent = '✅ Resposta correta! Parabéns!';
+                output.className = 'output-content success';
+                
+                // Avançar para próximo exercício
+                if (currentExerciseIndex < phase.exercises.length - 1) {
+                    currentExerciseIndex++;
+                    renderLesson();
+                } else {
+                    // Completou todos os exercícios da fase
+                    completePhase();
+                }
+            } else {
+                errorsInPhase++;
+                phaseStates[phase.id] = phaseStates[phase.id] || {};
+                phaseStates[phase.id].errors = errorsInPhase;
+                
+                if (errorsInPhase >= 3) {
+                    output.textContent = `❌ Errado! Você atingiu 3 erros. A fase será reiniciada.`;
+                    output.className = 'output-content error';
+                    saveState();
+                    renderLesson();
+                    
+                    setTimeout(() => {
+                        resetPhase();
+                    }, 2000);
+                } else {
+                    output.textContent = `❌ Resposta incorreta. Tente novamente. (Erros: ${errorsInPhase}/3)`;
+                    output.className = 'output-content error';
+                    saveState();
+                    renderLesson();
+                }
+            }
+        }
+
+        function checkAnswer(exercise, userOutput) {
+            if (exercise.expectedOutput === null) {
+                // Qualquer saída não vazia é considerada correta
+                return userOutput.trim().length > 0;
+            }
+            
+            // Normalizar saídas para comparação
+            const normalize = (str) => str.trim().toLowerCase().replace(/\s+/g, ' ');
+            return normalize(userOutput) === normalize(exercise.expectedOutput);
+        }
+
+        function completePhase() {
+            const phase = phases[currentPhaseIndex];
+            phaseStates[phase.id] = { completed: true, errors: errorsInPhase };
+            
+            showModal('🎉', 'Fase Completada!', 
+                `Parabéns! Você completou a fase "${phase.name}"!\n\nAgora você pode avançar para a próxima fase.`);
+            
+            saveState();
+            renderPhaseList();
+            updateProgress();
+        }
+
+        function resetPhase() {
+            const phase = phases[currentPhaseIndex];
+            errorsInPhase = 0;
+            currentExerciseIndex = 0;
+            phaseStates[phase.id] = { errors: 0 };
+            
+            document.getElementById('codeEditor').value = '';
+            document.getElementById('outputContent').textContent = 'Fase reiniciada. Tente novamente!';
+            document.getElementById('outputContent').className = 'output-content';
+            
+            saveState();
+            renderLesson();
+            renderPhaseList();
+        }
+
+        function resetAll() {
+            if (confirm('Tem certeza que deseja resetar todo o progresso?')) {
+                phaseStates = {};
+                currentPhaseIndex = 0;
+                errorsInPhase = 0;
+                currentExerciseIndex = 0;
+                
+                localStorage.removeItem('pythonLearningState');
+                
+                document.getElementById('codeEditor').value = '';
+                document.getElementById('outputContent').textContent = 'Progresso resetado!';
+                
+                saveState();
+                renderPhaseList();
+                renderLesson();
+                updateProgress();
+            }
+        }
+
+        // ===== NAVIGATION =====
+        function prevExercise() {
+            if (currentExerciseIndex > 0) {
+                currentExerciseIndex--;
+                renderLesson();
+            }
+        }
+
+        function nextExercise() {
+            const phase = phases[currentPhaseIndex];
+            if (currentExerciseIndex < phase.exercises.length - 1) {
+                currentExerciseIndex++;
+                renderLesson();
+            }
+        }
+
+        // ===== PROGRESS =====
+        function updateProgress() {
+            const completed = Object.values(phaseStates).filter(s => s.completed).length;
+            const total = phases.length;
+            const totalErrors = Object.values(phaseStates).reduce((sum, s) => sum + (s.errors || 0), 0);
+            
+            document.getElementById('progressFill').style.width = `${(completed / total) * 100}%`;
+            document.getElementById('completedPhases').textContent = `${completed}/${total} fases completadas`;
+            document.getElementById('totalErrors').textContent = `${totalErrors} erros totais`;
+        }
+
+        // ===== MODAL =====
+        function showModal(icon, title, text) {
+            document.getElementById('modalIcon').textContent = icon;
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalText').textContent = text;
+            document.getElementById('modal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('show');
+            
+            // Se completou fase, avançar para próxima
+            if (document.getElementById('modalTitle').textContent.includes('Completada')) {
+                if (currentPhaseIndex < phases.length - 1) {
+                    loadPhase(currentPhaseIndex + 1);
+                } else {
+                    showModal('🏆', 'Parabéns!', 'Você completou TODAS as fases! Você é um mestre Python!');
+                }
+            }
+        }
+
+        // ===== AI ASSISTANT =====
+        function toggleAI() {
+            const assistant = document.getElementById('aiAssistant');
+            assistant.classList.toggle('minimized');
+        }
+
+        function sendAIMessage() {
+            const input = document.getElementById('aiInput');
+            const message = input.value.trim();
+            if (!message) return;
+            
+            const aiBody = document.getElementById('aiBody');
+            
+            // Adicionar mensagem do usuário
+            aiBody.innerHTML += `<div class="ai-message user">${escapeHTML(message)}</div>`;
+            
+            // Gerar resposta da IA
+            const response = generateAIResponse(message);
+            
+            // Mostrar "pensando" temporariamente
+            aiBody.innerHTML += `<div class="ai-message ai"><i>Pensando...</i></div>`;
+            input.value = '';
+            aiBody.scrollTop = aiBody.scrollHeight;
+            
+            setTimeout(() => {
+                // Remover "pensando" e adicionar resposta
+                const messages = aiBody.querySelectorAll('.ai-message.ai');
+                if (messages.length > 0) {
+                    messages[messages.length - 1].remove();
+                }
+                aiBody.innerHTML += `<div class="ai-message ai">${response}</div>`;
+                aiBody.scrollTop = aiBody.scrollHeight;
+            }, 500);
+        }
+
+        function generateAIResponse(message) {
+            const lower = message.toLowerCase();
+            
+            // Respostas baseadas no contexto
+            if (lower.includes('print')) {
+                return `A função <code>print()</code> exibe texto na tela. Exemplo:\n\n<pre><code>print("Olá, mundo!")</code></pre>\n\nVocê pode imprimir variáveis também:\n\n<pre><code>nome = "Ana"\nprint(f"Meu nome é {nome}")</code></pre>`;
+            }
+            
+            if (lower.includes('variavel') || lower.includes('variable')) {
+                return `Variáveis são como "caixas" para armazenar dados:\n\n<pre><code>nome = "João"     # String\nidade = 25       # Integer\naltura = 1.75    # Float\nestudante = True # Boolean</code></pre>\n\nPython infere o tipo automaticamente!`;
+            }
+            
+            if (lower.includes('funcao') || lower.includes('function')) {
+                return `Funções são blocos de código reutilizáveis:\n\n<pre><code>def saudacao(nome):\n    return f"Olá, {nome}!"\n\nprint(saudacao("Maria"))</code></pre>\n\nUse <code>def</code> para definir e <code>return</code> para retornar valores.`;
+            }
+            
+            if (lower.includes('lista') || lower.includes('list')) {
+                return `Listas são coleções de itens:\n\n<pre><code>numeros = [1, 2, 3, 4, 5]\nprint(numeros[0])   # 1\nprint(numeros[-1])  # 5\n\nnumeros.append(6)  # Adiciona\nnumeros.remove(3)  # Remove</code></pre>`;
+            }
+            
+            if (lower.includes('dicionario') || lower.includes('dictionary')) {
+                return `Dicionários usam pares chave-valor:\n\n<pre><code>pessoa = {\n    "nome": "Ana",\n    "idade": 25\n}\n\nprint(pessoa["nome"])     # Ana\nprint(pessoa.get("idade")) # 25</code></pre>`;
+            }
+            
+            if (lower.includes('if') || lower.includes('condicional')) {
+                return `Estruturas condicionais:\n\n<pre><code>if idade < 18:\n    print("Menor")\nelif idade == 18:\n    print("Exatamente 18")\nelse:\n    print("Maior")</code></pre>`;
+            }
+            
+            if (lower.includes('loop') || lower.includes('for') || lower.includes('while')) {
+                return `Loops em Python:\n\n<pre><code># For com range\nfor i in range(5):\n    print(i)  # 0,1,2,3,4\n\n# For com lista\nfor item in [1,2,3]:\n    print(item)\n\n# While\ncont = 0\nwhile cont < 5:\n    print(cont)\n    cont += 1</code></pre>`;
+            }
+            
+            if (lower.includes('classe') || lower.includes('class') || lower.includes('poo')) {
+                return `Classes em Python (POO):\n\n<pre><code>class Pessoa:\n    def __init__(self, nome):\n        self.nome = nome\n    \n    def falar(self):\n        print(f"Olá, sou {self.nome}")\n\np = Pessoa("Ana")\np.falar()</code></pre>`;
+            }
+            
+            if (lower.includes('erro') || lower.includes('except') || lower.includes('try')) {
+                return `Tratamento de erros:\n\n<pre><code>try:\n    resultado = 10 / 0\nexcept ZeroDivisionError:\n    print("Não divide por zero!")\nexcept:\n    print("Outro erro")\nfinally:\n    print("Sempre executa")</code></pre>`;
+            }
+            
+            if (lower.includes('exercicio') || lower.includes('ajuda') || lower.includes('help')) {
+                return `Claro! Me diga qual exercício está fazendo e eu posso:\n\n• Explicar o conceito\n• Dar dicas específicas\n• Mostrar exemplos similares\n\nNão vou resolver para você, mas vou guiá-lo! 😊`;
+            }
+            
+            if (lower.includes('python') || lower.includes('aprender')) {
+                return `Dicas para aprender Python:\n\n1. **Pratique todos os dias** - 30 min > 5h uma vez\n2. **Crie projetos reais**\n3. **Leia o código dos outros**\n4. **Erre muito** - cada erro é aprendizado\n5. **Não decore, entenda**\n\nVocê está no caminho certo! 🚀`;
+            }
+            
+            // Resposta genérica
+            return `Ótima pergunta! Aqui estão algumas dicas:\n\n• Tente entender o conceito por trás do código\n• Consulte a <a href="https://docs.python.org/pt-br/3/" target="_blank">documentação oficial</a>\n• Pratique com exercícios similares\n\nSe precisar de mais ajuda, é só perguntar! 😊`;
+        }
+
+        function escapeHTML(str) {
+            return str.replace(/&/g, '&')
+                      .replace(/</g, '<')
+                      .replace(/>/g, '>')
+                      .replace(/"/g, '"');
+        }
+
+        // ===== KEYBOARD SHORTCUTS =====
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    runCode();
+                }
+            }
+        });
+
+        // ===== INITIALIZE =====
+        init();
+    </script>
+</body>
+</html>
