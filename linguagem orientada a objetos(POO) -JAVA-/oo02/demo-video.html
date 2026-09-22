@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Demo Vídeo — Programa OO02 Rodando</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --surface2: #334155;
+            --border: #475569;
+            --text: #f1f5f9;
+            --text-dim: #94a3b8;
+            --accent: #38bdf8;
+            --accent2: #818cf8;
+            --green: #4ade80;
+            --orange: #fb923c;
+            --red: #f87171;
+            --yellow: #facc15;
+            --pink: #f472b6;
+        }
+        * { margin:0;padding:0;box-sizing:border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow: hidden;
+            height: 100vh;
+        }
+        .stage {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: 
+                radial-gradient(ellipse at 50% 0%, rgba(56,189,248,0.08) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 80%, rgba(129,140,248,0.05) 0%, transparent 50%),
+                var(--bg);
+        }
+        /* CONSOLE */
+        .console {
+            width: 780px;
+            max-width: 92vw;
+            background: #0c0c14;
+            border: 2px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(56,189,248,0.1);
+            position: relative;
+        }
+        .console-bar {
+            background: var(--surface2);
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+        .console-dot {
+            width: 12px; height: 12px;
+            border-radius: 50%;
+        }
+        .dot-red { background: #ff5f57; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #28c840; }
+        .console-title {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            margin-left: 8px;
+            font-weight: 500;
+        }
+        .console-body {
+            padding: 24px 28px;
+            min-height: 340px;
+            position: relative;
+        }
+        .line {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.95rem;
+            line-height: 1.8;
+            opacity: 0;
+            transform: translateY(8px);
+            transition: opacity 0.25s ease, transform 0.25s ease;
+        }
+        .line.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .line.prompt { color: var(--green); }
+        .line.input { color: var(--yellow); }
+        .line.output { color: var(--text-dim); }
+        .line.output-bold { color: var(--accent); font-weight: 600; }
+        .line.output-cpf { color: var(--green); }
+        .line.output-cnpj { color: var(--accent2); }
+        .line.output-error { color: var(--red); font-weight: 600; }
+        .line.divider { color: var(--border); text-align: center; margin: 8px 0; }
+        .line.title { color: var(--text); font-weight: 700; font-size: 1.05rem; }
+        .line.label { color: var(--text-dim); }
+
+        /* HIGHLIGHT BOX */
+        .highlight-box {
+            position: absolute;
+            top: 24px;
+            right: 28px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px 18px;
+            font-size: 0.8rem;
+            min-width: 200px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .highlight-box.show { opacity: 1; }
+        .highlight-box .hb-title {
+            color: var(--accent);
+            font-weight: 700;
+            margin-bottom: 6px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .highlight-box .hb-content {
+            color: var(--text-dim);
+            font-family: monospace;
+        }
+        .highlight-box .hb-content .val {
+            color: var(--yellow);
+        }
+        .highlight-box .hb-content .cls {
+            color: var(--accent2);
+        }
+
+        /* TIMER */
+        .timer-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        /* Loading overlay */
+        .loader-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: opacity 0.5s;
+        }
+        .loader-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .loader-spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loader-text {
+            margin-top: 16px;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+        .loader-progress {
+            margin-top: 8px;
+            color: var(--accent);
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* BOTÃO INICIAR */
+        .btn-start {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: var(--bg);
+            border: none;
+            padding: 14px 32px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(56,189,248,0.3);
+            transition: transform 0.15s, box-shadow 0.15s;
+            z-index: 5;
+        }
+        .btn-start:hover {
+            transform: translateX(-50%) scale(1.03);
+            box-shadow: 0 8px 28px rgba(56,189,248,0.4);
+        }
+        .btn-start:active { transform: translateX(-50%) scale(0.97); }
+        .btn-start.hidden { display: none; }
+
+        /* FLAGS */
+        .flag-row {
+            position: absolute;
+            top: 24px;
+            left: 28px;
+            display: flex;
+            gap: 8px;
+            z-index: 3;
+        }
+        .flag {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            font-weight: 500;
+        }
+        .flag .flag-val {
+            color: var(--yellow);
+            font-family: monospace;
+            font-weight: 700;
+        }
+
+        /* TIPO DOCUMENTO BADGE */
+        .doc-badge {
+            position: absolute;
+            top: 72px;
+            right: 28px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: opacity 0.3s, transform 0.3s;
+            z-index: 3;
+        }
+        .doc-badge.show { opacity: 1; transform: scale(1); }
+        .doc-badge.cpf {
+            background: rgba(74,222,128,0.2);
+            color: var(--green);
+            border: 1px solid var(--green);
+        }
+        .doc-badge.cnpj {
+            background: rgba(129,140,248,0.2);
+            color: var(--accent2);
+            border: 1px solid var(--accent2);
+        }
+        .doc-badge.invalido {
+            background: rgba(248,113,113,0.2);
+            color: var(--red);
+            border: 1px solid var(--red);
+        }
+
+        /* FOOTER */
+        .footer {
+            margin-top: 16px;
+            color: var(--text-dim);
+            font-size: 0.75rem;
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+            .console { width: 96vw; }
+            .console-body { padding: 16px; padding-bottom: 50px; }
+            .line { font-size: 0.8rem; }
+            .highlight-box { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="stage">
+
+    <div class="flag-row">
+        <div class="flag">Projeto: <span class="flag-val">oo02</span></div>
+        <div class="flag">Java · NetBeans</div>
+    </div>
+
+    <div class="doc-badge" id="docBadge"></div>
+
+    <div class="console">
+        <div class="console-bar">
+            <div class="console-dot dot-red"></div>
+            <div class="console-dot dot-yellow"></div>
+            <div class="console-dot dot-green"></div>
+            <div class="console-title">OO02 — cmd — Java</div>
+        </div>
+        <div class="console-body" id="consoleBody">
+            <div class="loader-overlay" id="loader">
+                <div class="loader-spinner"></div>
+                <div class="loader-text">Iniciando demonstração...</div>
+                <div class="loader-progress" id="loaderProgress"></div>
+            </div>
+
+            <!-- As linhas são injetadas dinamicamente pelo JS -->
+            <div id="lines"></div>
+
+            <div class="highlight-box" id="highlightBox">
+                <div class="hb-title">📌 Contexto atual</div>
+                <div class="hb-content" id="hbContent"></div>
+            </div>
+
+            <div class="timer-bar" id="timerBar"></div>
+        </div>
+    </div>
+
+    <button class="btn-start" id="btnStart" onclick="iniciar()">▶ INICIAR DEMONSTRAÇÃO</button>
+
+    <div class="footer">
+        Demonstração interativa do programa OO02 — CPF lista tudo · CNPJ lista só nome+cnpj
+    </div>
+</div>
+
+<script>
+// ============================================================
+// DEMO DO PROGRAMA OO02 — simulação da execução passo a passo
+// ============================================================
+
+const esc = document.getElementById('lines');
+const loader = document.getElementById('loader');
+const loaderProgress = document.getElementById('loaderProgress');
+const timerBar = document.getElementById('timerBar');
+const btnStart = document.getElementById('btnStart');
+const highlightBox = document.getElementById('highlightBox');
+const hbContent = document.getElementById('hbContent');
+const docBadge = document.getElementById('docBadge');
+
+let currentLine = 0;
+let animating = false;
+
+const TOTAL_LINES = 38; // total de passos da animação
+
+function addLine(text, className = 'output') {
+    const div = document.createElement('div');
+    div.className = 'line ' + className;
+    div.textContent = text;
+    esc.appendChild(div);
+    // Força layout para animação
+    void div.offsetWidth;
+    requestAnimationFrame(() => {
+        div.classList.add('show');
+    });
+    return div;
+}
+
+function setHighlight(title, content) {
+    highlightBox.classList.add('show');
+    hbContent.innerHTML = content;
+}
+
+function hideHighlight() {
+    highlightBox.classList.remove('show');
+}
+
+function setDocBadge(text, type) {
+    docBadge.textContent = text;
+    docBadge.className = 'doc-badge show ' + type;
+}
+
+function clearDocBadge() {
+    docBadge.className = 'doc-badge';
+}
+
+function updateTimer(pct) {
+    timerBar.style.width = (pct * 100) + '%';
+}
+
+function scrollToBottom() {
+    const body = document.getElementById('consoleBody');
+    body.scrollTop = body.scrollHeight;
+}
+
+// Simula digitação de prompt com delay
+function showPrompt(text, delay = 400) {
+    setTimeout(() => {
+        addLine('> ' + text, 'prompt');
+        scrollToBottom();
+    }, delay);
+}
+
+function showInput(text, delay = 300) {
+    setTimeout(() => {
+        addLine(text, 'input');
+        scrollToBottom();
+    }, delay);
+}
+
+function showOutput(text, cls = 'output', delay = 200) {
+    setTimeout(() => {
+        addLine(text, cls);
+        scrollToBottom();
+    }, delay);
+}
+
+function showDivider(delay = 250) {
+    setTimeout(() => {
+        addLine('─'.repeat(50), 'divider');
+        scrollToBottom();
+    }, delay);
+}
+
+function showTitle(text, delay = 300) {
+    setTimeout(() => {
+        addLine(text, 'title');
+        scrollToBottom();
+    }, delay);
+}
+
+function sleep(ms) {
+    return new Promise(r => setTimeout(r, ms));
+}
+
+// ============================================================
+// O PROGRAMA PRINCIPAL (simulado)
+// ============================================================
+
+async function executarPrograma() {
+    // Estado simulado do usuário
+    const nome = "Maria Silva";
+    const cep = "01000-000";
+    const rua = "Rua das Flores";
+    const numero = "123";
+    const temTelefone = "s";
+    const ddd = "11";
+    const telNumero = "998765432";
+    const telTipo = "celular";
+    const documento = "12345678901"; // CPF de 11 dígitos
+
+    let step = 0;
+    const totalSteps = 31;
+    const stepDuration = 500; // ms por passo
+
+    function updateStep(n) {
+        step = n;
+        updateTimer(step / totalSteps);
+        loaderProgress.textContent = `Executando... ${step}/${totalSteps}`;
+    }
+
+    updateStep(1);
+
+    // 1. Scanner
+    await sleep(stepDuration);
+    setHighlight('📌 Scanner', '<span class="cls">Scanner</span> scan = <span class="cls">new</span> <span class="cls">Scanner</span>(System.in);<br><span class="label">Abre leitura do teclado</span>');
+    showPrompt('Scanner scan = new Scanner(System.in);', 100);
+    updateStep(2);
+
+    // 2. new clientes()
+    await sleep(stepDuration);
+    setHighlight('📌 Criando cliente', '<span class="cls">clientes</span> cli = <span class="cls">new</span> <span class="cls">clientes</span>();<br><span class="label">Objeto vazio criado na memória</span>');
+    showPrompt('clientes cli = new clientes();', 100);
+    updateStep(3);
+
+    // 3. perguntar nome
+    await sleep(stepDuration);
+    setHighlight('📌 Entrada de dados', '<span class="label">System.out.print("nome: ");</span><br><span class="val">' + nome + '</span> ← digitado pelo usuário');
+    showPrompt('System.out.print("digite o nome do cliente: ");');
+    await sleep(400);
+    showInput(nome);
+    showOutput('cli.setNome("' + nome + '");', 'output-bold');
+    updateStep(4);
+
+    // 4. perguntar CEP
+    await sleep(stepDuration);
+    setHighlight('📌 CEP', '<span class="label">System.out.print("CEP: ");</span><br><span class="val">' + cep + '</span>');
+    showPrompt('System.out.print("digite o CEP: ");');
+    await sleep(400);
+    showInput(cep);
+    showOutput('end.setCep("' + cep + '");', 'output-bold');
+    updateStep(5);
+
+    // 5. perguntar rua
+    await sleep(stepDuration);
+    setHighlight('📌 Rua', '<span class="label">System.out.print("rua: ");</span><br><span class="val">' + rua + '</span>');
+    showPrompt('System.out.print("digite o nome da rua: ");');
+    await sleep(400);
+    showInput(rua);
+    showOutput('end.setRua("' + rua + '");', 'output-bold');
+    updateStep(6);
+
+    // 6. perguntar número
+    await sleep(stepDuration);
+    setHighlight('📌 Número', '<span class="label">System.out.print("numero: ");</span><br><span class="val">' + numero + '</span>');
+    showPrompt('System.out.print("digite o numero: ");');
+    await sleep(400);
+    showInput(numero);
+    showOutput('end.setNumero("' + numero + '");', 'output-bold');
+    updateStep(7);
+
+    // 7. criar endereço
+    await sleep(stepDuration);
+    setHighlight('📌 new endereços()', '<span class="cls">endereços</span> end = <span class="cls">new</span> <span class="cls">endereços</span>();<br><span class="label">Objeto endereço criado</span>');
+    showPrompt('endereços end = new endereços();', 100);
+    updateStep(8);
+
+    // 8. conectar end ao cliente (COMPOSIÇÃO)
+    await sleep(stepDuration);
+    setHighlight('⭐ COMPOSIÇÃO', '<span class="cls">cli</span>.<span class="method-name">setEnd</span>(<span class="cls">end</span>);<br><span class="label">Cliente agora TEM um endereço!</span><br><span class="label">cli.end → [endereços]</span>');
+    showOutput('cli.setEnd(end);  ← COMPOSIÇÃO!', 'output-bold');
+    showDivider(200);
+    updateStep(9);
+
+    // 9. perguntar telefone
+    await sleep(stepDuration);
+    setHighlight('📌 Telefone opcional', 'System.out.print("tem telefone? (s/n): ");<br><span class="val">' + temTelefone + '</span> ← digitado');
+    showPrompt('System.out.print("tem telefone? (s/n): ");');
+    await sleep(400);
+    showInput(temTelefone);
+    updateStep(10);
+
+    // 10. se sim, criar telefone
+    if (temTelefone === 's' || temTelefone === 'sim') {
+        await sleep(stepDuration);
+        setHighlight('📌 new Telefone()', '<span class="cls">Telefone</span> tel = <span class="cls">new</span> <span class="cls">Telefone</span>();<br><span class="label">Objeto telefone criado</span>');
+        showOutput('tel = new Telefone();', 'output-bold');
+        showPrompt('System.out.print("DDD: ");');
+        await sleep(300);
+        showInput(ddd);
+        showOutput('tel.setDdd("' + ddd + '");', 'output-bold');
+        showPrompt('System.out.print("numero: ");');
+        await sleep(300);
+        showInput(telNumero);
+        showOutput('tel.setNumero("' + telNumero + '");', 'output-bold');
+        showPrompt('System.out.print("tipo: ");');
+        await sleep(300);
+        showInput(telTipo);
+        showOutput('tel.setTipo("' + telTipo + '");', 'output-bold');
+        showDivider(200);
+    }
+    updateStep(11);
+
+    // 11. perguntar documento
+    await sleep(stepDuration);
+    setHighlight('📌 Decisão: CPF ou CNPJ?', 'System.out.print("CPF 11 ou CNPJ 14 digitos: ");<br><span class="val">' + documento + '</span> ← digitado');
+    showPrompt('System.out.print("CPF (11) ou CNPJ (14) digitos: ");');
+    await sleep(400);
+    showInput(documento);
+    showDivider(200);
+    updateStep(12);
+
+    // 12. Limpar e validar
+    await sleep(stepDuration);
+    const docLimpo = documento.replace(/\s/g, '');
+    setHighlight('📌 Validando documento', 'docLimpo = "' + docLimpo + '"<br>docLimpo.length = ' + docLimpo.length + '<br>Regex [0-9]+: ' + docLimpo.match(/^\d+$/)?.toString() || 'false');
+    showOutput('// Remove espacos e valida', 'output');
+    showOutput('String docLimpo = "' + docLimpo + '";', 'output');
+    updateStep(13);
+
+    // 13. Decisão
+    await sleep(stepDuration);
+    if (docLimpo.length === 11 && docLimpo.match(/^\d+$/)) {
+        // === É CPF ===
+        setHighlight('🟢 É CPF (11 dígitos)!', '<span style="color:var(--green);font-size:1.1rem;">✅ DOCUMENTO IDENTIFICADO: CPF</span><br><span class="label">Pessoa física → lista TUDO</span>');
+        setDocBadge('CPF — PESSOA FÍSICA', 'cpf');
+        showTitle('>>> DOCUMENTO IDENTIFICADO: CPF (pessoa física)');
+        showTitle('>>> LISTAGEM COMPLETA DE TODOS OS DADOS');
+        showDivider(300);
+
+        await sleep(stepDuration);
+        showOutput('Cpf cpf = new Cpf();', 'output-bold');
+        showOutput('cpf.setNumero("' + docLimpo + '");', 'output');
+        showOutput('cpf.setNomeTitular("' + nome + '");', 'output');
+        showDivider(200);
+        updateStep(17);
+
+        await sleep(stepDuration);
+        showOutput('========================================', 'output-bold');
+        showOutput('           DADOS COMPLETOS', 'output-bold');
+        showOutput('========================================', 'output-bold');
+        showOutput('Nome: ' + nome, 'output-bold');
+        showDivider(100);
+        updateStep(18);
+
+        await sleep(stepDuration);
+        showOutput('ENDEREÇO:', 'label');
+        showOutput('  CEP: ' + cep, 'output');
+        showOutput('  Rua: ' + rua, 'output');
+        showOutput('  Numero: ' + numero, 'output');
+        showDivider(100);
+
+        if (temTelefone === 's' || temTelefone === 'sim') {
+            await sleep(300);
+            showOutput('TELEFONE:', 'label');
+            showOutput('  (' + ddd + ') ' + telNumero + ' - ' + telTipo, 'output-bold');
+            showDivider(100);
+        }
+        updateStep(20);
+
+        await sleep(stepDuration);
+        showOutput('DOCUMENTO (CPF):', 'label');
+        // Simula o listarTodos()
+        showOutput('---------- DADOS PESSOA FISICA (CPF) ----------', 'output-cpf');
+        showOutput('Nome completo: ' + nome, 'output-cpf');
+        showOutput('CPF: 123.456.789-01', 'output-cpf');
+        showOutput('-----------------------------------------', 'output-cpf');
+        showDivider(200);
+        updateStep(22);
+
+        await sleep(stepDuration);
+        showOutput('========================================', 'output-bold');
+        setHighlight('✅ CPF: tudo listado!', '<span class="label">Cpf.listarTodos() → imprime nome, CPF formatado</span><br><span class="label">O endereço e telefone tambem foram mostrados acima</span>');
+        await sleep(600);
+        clearDocBadge();
+        showTitle('=== FIM ===');
+        updateStep(totalSteps);
+        await sleep(800);
+        return;
+
+    } else if (docLimpo.length === 14 && docLimpo.match(/^\d+$/)) {
+        // === É CNPJ ===
+        setHighlight('🔵 É CNPJ (14 dígitos)!', '<span style="color:var(--accent2);font-size:1.1rem;">✅ DOCUMENTO IDENTIFICADO: CNPJ</span><br><span class="label">Pessoa juridica → lista SÓ nome+cnpj</span>');
+        setDocBadge('CNPJ — PESSOA JURÍDICA', 'cnpj');
+        showTitle('>>> DOCUMENTO IDENTIFICADO: CNPJ (pessoa juridica)');
+        showTitle('>>> LISTAGEM APENAS NOME E CNPJ');
+        showDivider(300);
+
+        await sleep(stepDuration);
+        showOutput('Cnpj cnpj = new Cnpj();', 'output-bold');
+        showOutput('cnpj.setNumero("' + docLimpo + '");', 'output');
+        showOutput('cnpj.setNomeEmpresa("' + nome + '");', 'output');
+        showDivider(200);
+        updateStep(17);
+
+        await sleep(stepDuration);
+        showOutput('---------- DADOS PESSOA JURIDICA (CNPJ) ----------', 'output-cnpj');
+        showOutput('Empresa: ' + nome, 'output-cnpj');
+        showOutput('CNPJ: 12.345.678/0001-99', 'output-cnpj');
+        showOutput('---------------------------------------------------', 'output-cnpj');
+        showDivider(200);
+
+        await sleep(stepDuration);
+        setHighlight('✅ CNPJ: só nome + CNPJ!', '<span class="label">Cnpj.listarApenasNomeEcPjt() → imprime SOMENTE isso</span><br><span class="label">Endereco e telefone NAO foram listados (regra de negocio)</span>');
+        await sleep(600);
+        clearDocBadge();
+        showTitle('=== FIM ===');
+        updateStep(totalSteps);
+        await sleep(800);
+        return;
+
+    } else {
+        // === ERRADO ===
+        setHighlight('🔴 Documento inválido!', '<span style="color:var(--red);font-size:1.1rem;">❌ DOCUMENTO INVALIDO!</span><br><span class="label">CPF = 11 digitos, CNPJ = 14 digitos</span><br><span class="label">Voce digitou: ' + docLimpo.length + ' digitos</span>');
+        setDocBadge('DOCUMENTO INVÁLIDO', 'invalido');
+        showTitle('>>> ERRO: Documento invalido!');
+        showDivider(300);
+        showOutput('Nenhum dado listado.', 'output-error');
+        await sleep(stepDuration);
+        clearDocBadge();
+        showTitle('=== FIM ===');
+        updateStep(totalSteps);
+        await sleep(800);
+        return;
+    }
+}
+
+// ============================================================
+// CONTROLE
+// ============================================================
+
+async function iniciar() {
+    if (animating) return;
+    animating = true;
+    btnStart.classList.add('hidden');
+    loader.classList.remove('hidden');
+    loaderProgress.textContent = 'Preparando...';
+    updateTimer(0);
+
+    await sleep(600);
+    loaderProgress.textContent = 'Carregando classes...';
+    await sleep(500);
+    loaderProgress.textContent = 'Inicializando JVM...';
+    await sleep(500);
+    loaderProgress.textContent = 'Executando OO02.main()...';
+    await sleep(400);
+
+    // Limpa o loader
+    loader.classList.add('hidden');
+    updateTimer(0);
+
+    // Executa o programa simulado
+    await executarPrograma();
+
+    animating = false;
+}
+
+// Preenche umas linhas iniciais de contexto
+(function init() {
+    const intro = [
+        { text: 'Bem-vindo ao OO02!', cls: 'title' },
+        { text: 'Esta demonstracao mostra o programa rodando passo a passo.', cls: 'output' },
+        { text: 'Cada linha e uma acao do programa Java.', cls: 'output' },
+        { text: '', cls: 'divider' },
+    ];
+    intro.forEach(l => addLine(l.text, l.cls));
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,195 @@
+                    <!-- SEÇÃO 7b: ENCAPSULAMENTO VISUAL -->
+                    <div class="section">
+                        <h2><span class="icon">🔒</span> Encapsulamento Visual — Como os Dados são Protegidos</h2>
+                        <p>
+                            Encapsulamento é a ideia de <strong>esconder os dados internos</strong> de uma classe 
+                            e só permitir acesso controlado via métodos. Pense numa <strong>caixa-fortinha</strong>:
+                            você não pode mexer no que tá dentro diretamente, só usando a chave (os métodos).
+                        </p>
+
+                        <div style="display:flex;flex-wrap:wrap;gap:20px;margin:20px 0;justify-content:center;">
+                            <!-- CAIXA SEM ENCAPSULAMENTO -->
+                            <div style="background:var(--surface2);border:2px dashed var(--red);border-radius:12px;padding:20px;min-width:280px;flex:1;max-width:350px;">
+                                <div style="color:var(--red);font-weight:700;margin-bottom:10px;font-size:0.9rem;">🛑 SEM ENCAPSULAMENTO (ruim)</div>
+                                <div style="background:var(--bg);border-radius:8px;padding:12px;font-family:monospace;font-size:0.85rem;margin-bottom:12px;line-height:1.6;">
+                                    <span style="color:var(--red);">public class clientes {</span><br>
+                                    <span style="color:var(--red);">&nbsp;&nbsp;String nome;</span> <span style="color:var(--text-dim);">// ← público! qualquer um acessa</span><br>
+                                    <span style="color:var(--red);">}</span>
+                                </div>
+                                <div style="background:rgba(248,113,113,0.1);border:1px solid var(--red);border-radius:6px;padding:8px;font-size:0.8rem;color:var(--red);">
+                                    <strong>Risco:</strong> outro código pode fazer <code style="color:var(--red);">cli.nome = null;</code> e destruir o dado sem você poder impedir.
+                                </div>
+                            </div>
+
+                            <!-- SETA -->
+                            <div style="display:flex;align-items:center;justify-content:center;font-size:2rem;color:var(--text-dim);">→</div>
+
+                            <!-- CAIXA COM ENCAPSULAMENTO -->
+                            <div style="background:var(--surface2);border:2px solid var(--green);border-radius:12px;padding:20px;min-width:280px;flex:1;max-width:350px;">
+                                <div style="color:var(--green);font-weight:700;margin-bottom:10px;font-size:0.9rem;">✅ COM ENCAPSULAMENTO (bom)</div>
+                                <div style="background:var(--bg);border-radius:8px;padding:12px;font-family:monospace;font-size:0.85rem;margin-bottom:12px;line-height:1.6;">
+                                    <span style="color:var(--green);">public class clientes {</span><br>
+                                    <span style="color:var(--green);">&nbsp;&nbsp;private String nome;</span> <span style="color:var(--text-dim);">// ← só visível dentro da classe</span><br>
+                                    <span style="color:var(--green);">&nbsp;&nbsp;public void setNome(String n) {</span><br>
+                                    <span style="color:var(--green);">&nbsp;&nbsp;&nbsp;&nbsp;if (n != null && n.length() > 2) {</span><br>
+                                    <span style="color:var(--green);">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.nome = n;</span><br>
+                                    <span style="color:var(--green);">&nbsp;&nbsp;&nbsp;&nbsp;}</span><br>
+                                    <span style="color:var(--green);">&nbsp;&nbsp;}</span><br>
+                                    <span style="color:var(--green);">&nbsp;&nbsp;public String getNome() { return nome; }</span><br>
+                                    <span style="color:var(--green);">}</span>
+                                </div>
+                                <div style="background:rgba(74,222,128,0.1);border:1px solid var(--green);border-radius:6px;padding:8px;font-size:0.8rem;color:var(--green);">
+                                    <strong>Controle:</strong> você PODE validar no setter (ex: nome deve ter mais de 2 letras). Ninguém acessa o campo diretamente.
+                                </div>
+                            </div>
+                        </div>
+
+                        <h3 style="color:var(--accent);margin-top:24px;">O que o encapsulamento permite fazer</h3>
+                        <table style="font-size:0.9rem;">
+                            <tr>
+                                <th style="width:30%;background:var(--surface2);padding:10px 14px;border-radius:6px 6px 0 0;">Operação</th>
+                                <th style="width:35%;background:var(--surface2);padding:10px 14px;">Como é feito</th>
+                                <th style="width:35%;background:var(--surface2);padding:10px 14px;">Exemplo neste projeto</th>
+                            </tr>
+                            <tr>
+                                <td style="padding:10px 14px;border-bottom:1px solid var(--border);"><strong>Ler dado</strong></td>
+                                <td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-dim);">Via método <code>get</code></td>
+                                <td style="padding:10px 14px;border-bottom:1px solid var(--border);font-family:monospace;font-size:0.85rem;">cli.getNome() → retorna o nome</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:10px 14px;border-bottom:1px solid var(--border);"><strong>Escrever dado</strong></td>
+                                <td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-dim);">Via método <code>set</code></td>
+                                <td style="padding:10px 14px;border-bottom:1px solid var(--border);font-family:monospace;font-size:0.85rem;">cli.setNome("Maria") → guarda o nome</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:10px 14px;border-bottom:1px solid var(--border);"><strong>Validar antes de guardar</strong></td>
+                                <td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-dim);">Inside o <code>set</code>, checa condições</td>
+                                <td style="padding:10px 14px;border-bottom:1px solid var(--border);font-family:monospace;font-size:0.85rem;color:var(--text-dim);">não implementado ainda (exercício!)</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:10px 14px;"><strong>Mudar implementação internamente</strong></td>
+                                <td style="padding:10px 14px;color:var(--text-dim);">Só muda dentro da classe, o resto do programa não quebra</td>
+                                <td style="padding:10px 14px;font-family:monospace;font-size:0.85rem;color:var(--text-dim);">se amanhã CPF virar int, só muda Cpf.java</td>
+                            </tr>
+                        </table>
+
+                        <h3 style="color:var(--accent2);margin-top:24px;">Diagrama visual: camadas de acesso</h3>
+                        <div style="background:var(--bg);border-radius:12px;padding:24px;margin:16px 0;font-family:monospace;font-size:0.9rem;line-height:2;">
+                            <div style="background:var(--surface2);border:2px solid var(--accent2);border-radius:8px;padding:16px;margin-bottom:12px;text-align:center;">
+                                <strong style="color:var(--accent2);">CÓDIGO EXTERNO</strong><br>
+                                <span style="color:var(--text-dim);font-size:0.8rem;">outras classes, main, etc.</span><br><br>
+                                <span style="color:var(--yellow);">cli.setNome("Maria")</span> ← chama método público<br>
+                                <span style="color:var(--yellow);">String n = cli.getNome()</span> ← chama método público
+                            </div>
+                            <div style="background:var(--surface2);border:2px solid var(--accent);border-radius:8px;padding:16px;margin-bottom:12px;text-align:center;">
+                                <strong style="color:var(--accent);">CLASSE clientes</strong><br>
+                                <span style="color:var(--text-dim);font-size:0.8rem;">(métodos públicos: setNome, getNome)</span><br><br>
+                                <span style="color:var(--accent);">public void setNome(String n) {</span><br>
+                                <span style="color:var(--accent);">&nbsp;&nbsp;this.nome = n;</span> <span style="color:var(--text-dim);">// acessa campo privado</span><br>
+                                <span style="color:var(--accent);">}</span><br><br>
+                                <span style="color:var(--accent);">public String getNome() {</span><br>
+                                <span style="color:var(--accent);">&nbsp;&nbsp;return nome;</span> <span style="color:var(--text-dim);">// acessa campo privado</span><br>
+                                <span style="color:var(--accent);">}</span>
+                            </div>
+                            <div style="background:var(--surface2);border:2px solid var(--green);border-radius:8px;padding:16px;text-align:center;">
+                                <strong style="color:var(--green);">DADOS PRIVADOS</strong><br>
+                                <span style="color:var(--green);font-size:0.8rem;">private String nome;</span> <span style="color:var(--text-dim);font-size:0.7rem;">← ninguém de fora acessa direto!</span>
+                            </div>
+                            <div style="text-align:center;margin-top:16px;">
+                                <span style="font-size:1.5rem;">🔒</span>
+                                <span style="color:var(--text-dim);margin:0 12px;">barreira de proteção</span>
+                                <span style="font-size:1.5rem;">🔒</span>
+                            </div>
+                        </div>
+
+                        <div style="background:rgba(250,204,21,0.1);border:1px solid var(--yellow);border-radius:8px;padding:14px;margin-top:16px;color:var(--yellow);font-size:0.9rem;">
+                            💡 <strong>Dica:</strong> no projeto atual os campos são package-private (sem modificador — nem private nem public). Funciona para a aula, mas o padrão correto é <code style="color:var(--yellow);">private</code> com getters/setters públicos. Quando você avançar, mude todos os campos para <code>private</code>.
+                        </div>
+
+                        <h3 style="color:var(--orange);margin-top:24px;">Por que o <code>this.</code> é importante?</h3>
+                        <div style="background:var(--bg);border-radius:8px;padding:16px;font-family:monospace;font-size:0.9rem;line-height:1.8;margin:12px 0;">
+                            <span style="color:var(--orange);">public void setNome(String nome) {</span> <span style="color:var(--text-dim);">// parâmetro se chama "nome"</span><br>
+                            <span style="color:var(--orange);">&nbsp;&nbsp;<span style="color:var(--yellow);font-weight:700;">this</span>.nome = nome;</span> <span style="color:var(--text-dim);">// this.nome = campo da classe</span><br>
+                            <span style="color:var(--orange);">}</span><br><br>
+                            <span style="color:var(--text-dim);">Sem o </span><span style="color:var(--yellow);font-weight:700;">this</span><span style="color:var(--text-dim);">:</span><br>
+                            <span style="color:var(--orange);">&nbsp;&nbsp;nome = nome;</span> <span style="color:var(--red);">← erro! atribui o parâmetro a ele mesmo (sem sentido)</span><br>
+                            <br>
+                            <span style="color:var(--text-dim);">O </span><span style="color:var(--yellow);font-weight:700;">this</span><span style="color:var(--text-dim);"> é uma referência para "este objeto" — o próprio objeto que tá na memória.</span>
+                        </div>
+                    </div>
+
+                    <!-- EXERCÍCIOS EXTRAS -->
+                    <div class="exercicio-box" style="margin-top:20px;">
+                        <h3 style="color:var(--accent);">Exercício 6 — Tornar campos privados (encapsulamento completo)</h3>
+                        <ol>
+                            <li>Abra cada classe Java: <code>clientes.java</code>, <code>endereços.java</code>, <code>Telefone.java</code>, <code>Cpf.java</code>, <code>Cnpj.java</code></li>
+                            <li>Mude todos os campos de <code>String x;</code> para <code>private String x;</code></li>
+                            <li>Compile e rode — deve continuar funcionando porque os getters/setters são públicos</li>
+                            <li>Tente acessar direto: <code>cli.nome = "X";</code> no main — o NetBeans deve mostrar erro de compilacao</li>
+                            <li>Agora usa apenas <code>cli.setNome("X");</code> — funciona</li>
+                            <li>Salve e comente: "agora os dados estão protegidos"</li>
+                        </ol>
+                    </div>
+
+                    <div class="exercicio-box" style="margin-top:16px;">
+                        <h3 style="color:var(--accent);">Exercício 7 — Validação no setter (nome com pelo menos 3 letras)</h3>
+                        <ol>
+                            <li>Abra <code>clientes.java</code></li>
+                            <li>Altere o <code>setNome</code> para:
+                            <div class="codigo-ex">public void setNome(String nome) {
+                                if (nome != null && nome.trim().length() >= 3) {
+                                    this.nome = nome;
+                                } else {
+                                    System.out.println("ERRO: nome deve ter pelo menos 3 caracteres!");
+                                }
+                            }</div>
+                            </li>
+                            <li>No <code>Oo02.java</code>, tente cadastrar com nome de 2 letras (ex: "Ab")</li>
+                            <li>O programa deve imprimir o erro mas continuar rodando</li>
+                            <li>Teste com nome de 3+ letras (ex: "Ana") — deve funcionar</li>
+                            <li>Adicione <code>System.out.println("Nome cadastrado: " + cli.getNome());</code> depois do setNome para confirmar</li>
+                        </ol>
+                    </div>
+
+                    <div class="exercicio-box" style="margin-top:16px;">
+                        <h3 style="color:var(--accent);">Exercício 8 — Validar CEP com 8 dígitos</h3>
+                        <ol>
+                            <li>Abra <code>endereços.java</code></li>
+                            <li>Altere o <code>setCep</code> para:
+                            <div class="codigo-ex">public void setCep(String cep) {
+                                String limpo = cep.replaceAll("[^0-9]", "");
+                                if (limpo.length() == 8) {
+                                    this.Cep = limpo;
+                                } else {
+                                    System.out.println("ERRO: CEP deve ter 8 digitos!");
+                                }
+                            }</div>
+                            </li>
+                            <li>No <code>Oo02.java</code>, tente cadastrar CEP com 7 ou 9 dígitos</li>
+                            <li>Tente com CEP válido de 8 dígitos (ex: "01000000")</li>
+                            <li>O programa deve aceitar só o correto</li>
+                        </ol>
+                    </div>
+
+                    <div class="exercicio-box" style="margin-top:16px;">
+                        <h3 style="color:var(--accent);">Exercício 9 — Adicionar data de cadastro automática</h3>
+                        <ol>
+                            <li>Crie um campo <code>String dataCadastro;</code> na classe <code>clientes</code></li>
+                            <li>No <code>setNome</code>, ao confirmar o nome, também preencha a data com <code>new java.text.SimpleDateFormat("dd/MM/yyyy").format(new java.util.Date())</code></li>
+                            <li>Ou use <code>java.time.LocalDate.now()</code> (mais moderno)</li>
+                            <li>Adicione <code>getdataCadastro()</code> para ler a data</li>
+                            <li>No <code>Oo02.java</code>, imprima a data de cadastro junto com os outros dados</li>
+                            <li>Resultado: quando você cadastra um cliente, o sistema guarda automaticamente a data de hoje</li>
+                        </ol>
+                    </div>
+
+                    <div class="exercicio-box" style="margin-top:16px;">
+                        <h3 style="color:var(--accent);">Exercício 10 — Cliente com telefone MULTIPLO</h3>
+                        <ol>
+                            <li>Crie uma classe <code>ListaTelefones</code> que guarda vários telefones (use <code>ArrayList&lt;Telefone&gt;</code>)</li>
+                            <li>Ou, de forma mais simples: adicione campos <code>String tel1; String tel2;</code> na classe <code>clientes</code></li>
+                            <li>No <code>Oo02.java</code>, pergunte 2 telefones ao usuário</li>
+                            <li>Na listagem de CPF, imprima os 2 telefones</li>
+                            <li><strong>Desafio avançado:</strong> use <code>java.util.ArrayList&lt;Telefone&gt;</code> para ter uma lista infinita de telefones</li>
+                        </ol>
+                    </div>
