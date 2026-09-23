@@ -1,0 +1,7 @@
+[build]
+  base = "Python/python-roadmap-react-app"
+  command = "npm run build"
+  publish = "Python/python-roadmap-react-app/dist"
+
+[build.environment]
+  NODE_VERSION = "20"
