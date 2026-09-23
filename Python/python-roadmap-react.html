@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Python Roadmap 2.0 — React Edition</title>
+<meta name="description" content="Roadmap Python reescrito em React 18 + Tailwind + Hooks, com progresso salvo, busca, dark mode e animacoes." />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      fontFamily: { sans: ['Inter','system-ui','sans-serif'], mono: ['JetBrains Mono','monospace'] },
+      boxShadow: { glow: '0 0 40px -10px rgba(102,126,234,.6)' },
+      animation: { 'fade-up': 'fadeUp .6s ease both', float: 'float 6s ease-in-out infinite' },
+      keyframes: { fadeUp: { from: {opacity:0, transform:'translateY(24px)'}, to:{opacity:1, transform:'translateY(0)'} }, float: { '0%,100%':{transform:'translateY(0)'}, '50%':{transform:'translateY(-10px)'} } }
+    }
+  }
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+body{font-family:'Inter',system-ui,sans-serif}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:linear-gradient(#667eea,#764ba2);border-radius:99px}
+.grad-text{background:linear-gradient(90deg,#ffd700,#ff9ff3,#48dbfb);-webkit-background-clip:text;background-clip:text;color:transparent}
+.glass{background:rgba(255,255,255,.08);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.18)}
+.card-reveal{opacity:0;transform:translateY(28px);transition:all .7s cubic-bezier(.16,1,.3,1)}
+.card-reveal.visible{opacity:1;transform:none}
+.topic-done{ text-decoration:line-through; opacity:.65 }
+details>summary{list-style:none;cursor:pointer}
+details>summary::-webkit-details-marker{display:none}
+input[type="checkbox"]{accent-color:#667eea;width:18px;height:18px;cursor:pointer}
+.line-clamp-2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+</style>
+</head>
+<body class="bg-slate-950 text-slate-100 antialiased">
+<div id="root"></div>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script type="text/babel" data-presets="react">
+const {useState, useEffect, useMemo, useRef} = React;
+
+const PHASES = [
+{icon:"📚", title:"Fundamentos Básicos", desc:"A base de tudo! Sem pular etapas.", color:"from-rose-500 to-orange-400", topics:[
+{t:"Instalação e Configuração", d:"Instalar Python, configurar VS Code ou PyCharm, entender o terminal"},
+{t:"Primeiros Passos", d:"print(), input(), comentários, variáveis, tipos (int, float, str, bool)"},
+{t:"Operadores", d:"Aritméticos (+,-,*,/,//,%,**), comparação, lógicos (and, or, not)"},
+{t:"Estruturas de Controle", d:"if/elif/else, while, for, range(), break, continue"},
+{t:"Funções Básicas", d:"def, parâmetros, return, escopo de variáveis"},
+{t:"Listas e Tuplas", d:"Criar, slicing, append/remove/pop, tuplas imutáveis"}], resources:[
+{label:"Documentação Oficial (PT-BR)", url:"https://docs.python.org/pt-br/3/tutorial/"},
+{label:"Curso Python Guanabara", url:"https://www.youtube.com/watch?v=S9uPNppGsGo"},
+{label:"Exercism — Prática", url:"https://exercism.org/tracks/python"}]},
+{icon:"🔧", title:"Estruturas de Dados", desc:"Dominar estruturas é essencial para qualquer programa.", color:"from-amber-400 to-yellow-500", topics:[
+{t:"Dicionários", d:"Chave-valor, keys/values/items/get, aninhamento, comprehension"},
+{t:"Conjuntos (Sets)", d:"União, interseção, diferença, quando usar"},
+{t:"Manipulação de Strings", d:"split, join, strip, replace, f-strings"},
+{t:"List Comprehension", d:"Sintaxe, condições, aninhamento"},
+{t:"Arquivos", d:"open(), r/w/a, with statement, CSV básico"},
+{t:"Módulos e Import", d:"import, from...import, math, random, datetime, os"}], resources:[
+{label:"W3Schools Python", url:"https://www.w3schools.com/python/"},
+{label:"Exercícios Pynative", url:"https://pynative.com/python-exercises/"}]},
+{icon:"🎯", title:"POO — Orientação a Objetos", desc:"O paradigma mais usado em projetos reais.", color:"from-cyan-400 to-sky-600", topics:[
+{t:"Classes e Objetos", d:"class, __init__, self, instâncias, atributos"},
+{t:"Métodos", d:"Instância, __str__, __repr__, métodos mágicos"},
+{t:"Encapsulamento", d:"_ e __, @property, getters/setters"},
+{t:"Herança", d:"super(), sobrescrita, MRO"},
+{t:"Polimorfismo", d:"Duck typing, isinstance(), issubclass()"},
+{t:"Classes Abstratas", d:"ABC, @abstractmethod, quando usar"}], resources:[
+{label:"POO Curso em Vídeo", url:"https://www.youtube.com/watch?v=1WkYjl1dt54"},
+{label:"Real Python OOP", url:"https://realpython.com/python3-object-oriented-programming/"}]},
+{icon:"🧩", title:"Conceitos Avançados", desc:"Técnicas que separam iniciantes de profissionais.", color:"from-fuchsia-500 to-pink-500", topics:[
+{t:"Tratamento de Erros", d:"try/except/else/finally, raise, asserts, exceções custom"},
+{t:"Geradores e Iteradores", d:"yield, iter()/next(), itertools, lazy evaluation"},
+{t:"Decorators", d:"Funções como objetos, @wraps, com parâmetros"},
+{t:"Lambda + Alta ordem", d:"lambda, map, filter, reduce, sorted(key=...)"},
+{t:"*args e **kwargs", d:"Args variáveis, desempacotamento"},
+{t:"Context Managers", d:"with, __enter__/__exit__, criar o seu"}], resources:[
+{label:"Advanced Python — Corey Schafer", url:"https://www.youtube.com/watch?v=WhY7R6d5k7k"},
+{label:"Real Python", url:"https://realpython.com/"}]},
+{icon:"📦", title:"Módulos e Bibliotecas", desc:"O ecossistema Python é enorme — comece com o essencial.", color:"from-blue-500 to-indigo-600", topics:[
+{t:"pip + venv", d:"pip install, requirements.txt, venv, virtualenv, conda"},
+{t:"Módulos Padrão", d:"os, sys, pathlib, json, csv, re, collections, datetime, logging"},
+{t:"Requests (HTTP)", d:"APIs REST, JSON, autenticação"},
+{t:"NumPy", d:"Arrays, broadcasting, indexação avançada"},
+{t:"Pandas", d:"DataFrames, Series, leitura e análise de dados"},
+{t:"Matplotlib / Seaborn", d:"Gráficos, visualização, customização"}], resources:[
+{label:"Docs Requests", url:"https://requests.readthedocs.io/"},
+{label:"Docs Pandas", url:"https://pandas.pydata.org/docs/"},
+{label:"Docs NumPy", url:"https://numpy.org/doc/"}]},
+{icon:"🌐", title:"Desenvolvimento Web", desc:"Crie aplicações web com Python + front moderno.", color:"from-violet-600 to-purple-600", topics:[
+{t:"Flask", d:"Rotas, Jinja2, request/response, formulários, sessões"},
+{t:"Django", d:"MVT, ORM, admin, models, views, autenticação"},
+{t:"APIs REST com FastAPI", d:"Pydantic, status codes, docs automáticas OpenAPI"},
+{t:"HTML / CSS Moderno", d:"Semântica, Flex/Grid, responsivo"},
+{t:"JavaScript Essencial", d:"DOM, eventos, fetch API"},
+{t:"Bancos de Dados", d:"SQL, SQLite, PostgreSQL + SQLAlchemy"}], resources:[
+{label:"Docs Flask", url:"https://flask.palletsprojects.com/"},
+{label:"Docs Django", url:"https://docs.djangoproject.com/"},
+{label:"FastAPI", url:"https://fastapi.tiangolo.com/"}]},
+{icon:"🗄️", title:"Teste, Qualidade e DevOps", desc:"Escreva código profissional e confiável.", color:"from-teal-400 to-emerald-600", topics:[
+{t:"Testing", d:"unittest, pytest, mocks, TDD básico"},
+{t:"Type Hinting", d:"Annotations, mypy, typing"},
+{t:"Debugging", d:"pdb, debug VS Code, logging avançado"},
+{t:"Git e Versionamento", d:"commit, branch, merge, PR, GitHub"},
+{t:"CI/CD", d:"GitHub Actions, testes automáticos, deploy"},
+{t:"Docker", d:"Containers, Dockerfile, compose"}], resources:[
+{label:"Docs Pytest", url:"https://docs.pytest.org/"},
+{label:"Pro Git PT-BR", url:"https://git-scm.com/book/pt-br/v2"}]},
+{icon:"🚀", title:"Especialização", desc:"Escolha sua área e aprofunde!", color:"from-orange-400 to-pink-600", topics:[
+{t:"Data Science & ML", d:"Scikit-learn, TensorFlow/PyTorch, estatística"},
+{t:"Web Avançado", d:"Microserviços, async/await, WebSocket, OAuth, cache"},
+{t:"Automação", d:"Selenium, BeautifulSoup, scraping"},
+{t:"DevOps & Cloud", d:"AWS/GCP/Azure, IaC, monitoramento"},
+{t:"Mobile (Kivy/BeeWare)", d:"Apps mobile com Python"},
+{t:"Jogos (Pygame)", d:"Jogos 2D com Pygame"}], resources:[
+{label:"Scikit-learn", url:"https://scikit-learn.org/stable/"},
+{label:"Pygame Docs", url:"https://www.pygame.org/docs/"},
+{label:"BeautifulSoup", url:"https://www.crummy.com/software/BeautifulSoup/bs4/doc/"}]},
+{icon:"⚛️", title:"Front-End Moderno com React", isNew:true, desc:"NOVO! Conecte seu Python a interfaces profissionais.", color:"from-cyan-400 via-sky-500 to-indigo-600", topics:[
+{t:"React 18 + Vite", d:"create vite@latest, HMR ultrarrápido, estrutura src/, JSX vs TSX"},
+{t:"Componentes & Hooks", d:"useState, useEffect, useMemo, useRef, custom hooks, props"},
+{t:"Tailwind CSS 3", d:"Utility-first, darkMode class, responsivo mobile-first"},
+{t:"React Router 6", d:"BrowserRouter, Routes, useParams, loaders, rotas protegidas"},
+{t:"Estado Global Moderno", d:"Context + Zustand / Redux Toolkit / React Query (TanStack)"},
+{t:"Integração Python ↔ React", d:"Fetch/Axios → FastAPI/Flask, CORS, JWT, .env VITE_API_URL"},
+{t:"Deploy Full-Stack", d:"Frontend na Vercel/Netlify + API no Render/Railway, CI/CD"}], resources:[
+{label:"Docs React", url:"https://react.dev/"},
+{label:"Docs Vite", url:"https://vitejs.dev/"},
+{label:"Docs Tailwind", url:"https://tailwindcss.com/docs"},
+{label:"TanStack Query", url:"https://tanstack.com/query/latest"},
+{label:"FastAPI + CORS", url:"https://fastapi.tiangolo.com/tutorial/cors/"}]}
+];
+const TIPS = ["Pratique todos os dias — 30 min/dia > 5h 1x/semana","Crie projetos reais que resolvem seus problemas","Leia código no GitHub","Não decore — entenda","Erre muito: cada erro ensina","Participe da comunidade","Leia a documentação oficial","Ensine para solidificar","Tenha paciência","Code, code, code!"];
+
+function useLocalStorage(key, initial){
+  const [v,setV]=useState(()=>{try{const s=localStorage.getItem(key);return s?JSON.parse(s):initial}catch(e){return initial}});
+  useEffect(()=>{try{localStorage.setItem(key,JSON.stringify(v))}catch(e){}},[key,v]);
+  return [v,setV];
+}
+function useReveal(deps){
+  const ref=useRef(null);
+  useEffect(()=>{
+    const els=ref.current?ref.current.querySelectorAll('.card-reveal'):[];
+    const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target)}}),{threshold:.08});
+    els.forEach(el=>io.observe(el));
+    return ()=>io.disconnect();
+  },deps);
+  return ref;
+}
+function Navbar({dark,setDark,query,setQuery,total,donePct}){
+  return (<header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/70 backdrop-blur-xl">
+    <div className="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3">
+      <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-yellow-300 to-emerald-500 grid place-items-center text-2xl shadow-glow">🐍</div>
+      <div className="leading-tight"><p className="font-extrabold">Python Roadmap <span className="text-xs align-middle ml-1 px-2 py-0.5 rounded-full bg-gradient-to-r from-cyan-500 to-violet-600">React 2.0</span></p>
+      <p className="text-xs text-slate-400 font-mono">{donePct}% concluído • {total} tópicos</p></div>
+      <div className="ml-auto flex items-center gap-2">
+        <input value={query} onChange={e=>setQuery(e.target.value)} placeholder="🔍 Buscar (ex: hooks, pandas...)" className="hidden sm:block w-64 text-sm px-3 py-2 rounded-xl bg-white/10 border border-white/10 outline-none focus:ring-2 focus:ring-cyan-400 placeholder:text-slate-400" />
+        <button onClick={()=>setDark(!dark)} className="px-3 py-2 rounded-xl bg-white/10 border border-white/10 hover:bg-white/20 transition text-sm">{dark?"☀️ Light":"🌙 Dark"}</button>
+      </div>
+    </div>
+    <div className="sm:hidden px-4 pb-3"><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="🔍 Buscar..." className="w-full text-sm px-3 py-2 rounded-xl bg-white/10 border border-white/10 outline-none focus:ring-2 focus:ring-cyan-400" /></div>
+  </header>);
+}
+function Hero({donePct,doneCount,totalCount,onReset}){
+  return (<section className="relative overflow-hidden">
+    <div className="absolute -top-20 -left-20 w-96 h-96 bg-violet-600/30 blur-[100px] rounded-full"></div>
+    <div className="absolute top-10 right-0 w-96 h-96 bg-cyan-500/20 blur-[100px] rounded-full"></div>
+    <div className="max-w-6xl mx-auto px-4 pt-12 pb-8 text-center relative">
+      <p className="inline-flex items-center gap-2 text-xs font-mono px-3 py-1 rounded-full glass mb-4">⚛️ React 18 • Vite • Tailwind • Hooks • localStorage</p>
+      <h1 className="text-5xl sm:text-6xl font-black tracking-tight">🐍 Python <span className="grad-text">ROADMAP 2.0</span></h1>
+      <p className="mt-3 text-slate-300 max-w-2xl mx-auto">O mesmo roadmap que você já tinha — agora reescrito como um app <b>React moderno</b>: componentes, hooks, busca instantânea, progresso salvo e dark mode. + <b>Fase 9 inédita de Front-End</b>.</p>
+      <div className="mt-6 max-w-xl mx-auto glass rounded-2xl p-4">
+        <div className="flex justify-between text-sm mb-2"><span className="font-bold">📊 Seu progresso</span><span className="font-mono">{doneCount}/{totalCount} • {donePct}%</span></div>
+        <div className="h-3 rounded-full bg-white/10 overflow-hidden"><div className="h-full rounded-full bg-gradient-to-r from-emerald-400 via-cyan-400 to-violet-500 transition-all duration-700" style={{width:donePct+"%"}}></div></div>
+        <div className="mt-3 flex gap-2 justify-center">
+          <a href="#fase-8" className="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-violet-600 font-bold text-sm hover:opacity-90 transition shadow-glow">⚛️ Ver Fase React 👇</a>
+          <button onClick={onReset} className="px-4 py-2 rounded-xl bg-white/10 border border-white/10 text-sm hover:bg-white/20 transition">↺ Resetar</button>
+        </div>
+      </div>
+    </div>
+  </section>);
+}
+function PhaseCard({phase,idx,query,checked,toggleTopic}){
+  const [open,setOpen]=useState(idx<2);
+  const q=query.trim().toLowerCase();
+  const topics=phase.topics.map((tp,i)=>({...tp,key:idx+"-"+i})).filter(tp=>!q||tp.t.toLowerCase().includes(q)||tp.d.toLowerCase().includes(q));
+  if(q && topics.length===0) return null;
+  const done=phase.topics.filter((_,i)=>checked[idx+"-"+i]).length;
+  const pct=Math.round(done/phase.topics.length*100);
+  return (<article id={"fase-"+idx} className="card-reveal scroll-mt-24 rounded-3xl overflow-hidden bg-white/[.04] border border-white/10 hover:border-white/25 transition shadow-xl">
+    <button onClick={()=>setOpen(!open)} className="w-full text-left">
+      <div className={"h-2 bg-gradient-to-r "+phase.color}></div>
+      <div className="p-5 flex items-center gap-4">
+        <div className={"w-14 h-14 rounded-2xl grid place-items-center text-3xl bg-gradient-to-br "+phase.color+" shrink-0"}>{phase.icon}</div>
+        <div className="flex-1"><div className="flex items-center gap-2 flex-wrap">
+          <h2 className="text-xl font-extrabold">Fase {idx+1}: {phase.title}</h2>
+          {phase.isNew && <span className="text-[11px] font-black px-2 py-0.5 rounded-full bg-gradient-to-r from-cyan-400 to-violet-600 animate-pulse">✨ NOVA</span>}</div>
+          <p className="text-sm text-slate-400">{phase.desc}</p>
+          <div className="mt-2 h-2 rounded-full bg-white/10 overflow-hidden max-w-md"><div className={"h-full bg-gradient-to-r "+phase.color+" transition-all duration-500"} style={{width:pct+"%"}}></div></div>
+          <p className="text-xs font-mono text-slate-400 mt-1">{done}/{phase.topics.length} • {pct}% {open?"▲":"▼"}</p>
+        </div>
+      </div>
+    </button>
+    {open && (<div className="px-5 pb-5">
+      <div className="grid sm:grid-cols-2 gap-3">
+        {topics.map(tp=>{const c=!!checked[tp.key];return (
+          <label key={tp.key} className={"flex gap-3 p-3 rounded-2xl border cursor-pointer transition "+(c?"bg-emerald-500/10 border-emerald-400/40":"bg-white/[.04] border-white/10 hover:border-white/25")}>
+            <input type="checkbox" checked={c} onChange={()=>toggleTopic(tp.key)} className="mt-1" />
+            <span><span className={"block font-bold text-[15px] "+(c?"topic-done":"")}>{c?"✅ ":"⬜ "}{tp.t}</span>
+            <span className="block text-[13px] text-slate-400 leading-snug">{tp.d}</span></span>
+          </label>);})}
+      </div>
+      <details className="mt-3 rounded-2xl bg-amber-300/10 border border-amber-300/20 p-3">
+        <summary className="font-bold text-amber-200 text-sm">📖 Recursos recomendados ({phase.resources.length}) — clique</summary>
+        <ul className="mt-2 space-y-1">{phase.resources.map((r,i)=>(<li key={i} className="text-sm">🔗 <a href={r.url} target="_blank" rel="noreferrer" className="text-cyan-300 hover:underline">{r.label}</a></li>))}</ul>
+      </details>
+    </div>)}
+  </article>);
+}
+function CodeDemo(){
+  const [tab,setTab]=useState('react');
+  const codes={
+    react:`// ⚛️ React 18 + Vite — App.jsx
+import { useState, useEffect } from 'react';
+
+export default function ListaTarefas(){
+  const [tasks,setTasks]=useState([]);
+  useEffect(()=>{
+    fetch(import.meta.env.VITE_API_URL+'/tasks')
+      .then(r=>r.json()).then(setTasks);
+  },[]);
+  return <ul>{tasks.map(t=><li key={t.id}>{t.title}</li>)}</ul>;
+}`,
+    api:`# 🐍 FastAPI — main.py (backend p/ o React)
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+app = FastAPI()
+app.add_middleware(CORSMiddleware, allow_origins=["*"],
+  allow_methods=["*"], allow_headers=["*"])
+
+@app.get("/tasks")
+def list_tasks():
+    return [{"id":1,"title":"Estudar Hooks"}]`,
+    tail:`{/* 🎨 Tailwind — card responsivo + dark */}
+<div className="p-6 max-w-sm mx-auto rounded-2xl
+  bg-white dark:bg-slate-800 shadow-xl
+  hover:scale-105 transition">
+  <h3 className="font-bold text-lg">Fase 9: React ⚛️</h3>
+  <p className="text-slate-500 dark:text-slate-400">
+    Utility-first, mobile-first.
+  </p>
+</div>`};
+  return (<section className="card-reveal rounded-3xl bg-white/[.04] border border-white/10 p-5 sm:p-7">
+    <h2 className="text-2xl font-extrabold mb-1">💻 Python + React na prática</h2>
+    <p className="text-sm text-slate-400 mb-4">Como o front moderno conversa com seu backend Python. Troque de aba:</p>
+    <div className="flex gap-2 mb-3">{Object.keys(codes).map(k=>(<button key={k} onClick={()=>setTab(k)} className={"px-4 py-2 rounded-xl text-sm font-bold transition "+(tab===k?"bg-gradient-to-r from-cyan-500 to-violet-600":"bg-white/10 hover:bg-white/20")}>{k==='react'?'⚛️ React':k==='api'?'🐍 FastAPI':'🎨 Tailwind'}</button>))}</div>
+    <pre className="overflow-x-auto text-[13px] leading-relaxed font-mono bg-black/50 border border-white/10 rounded-2xl p-4 whitespace-pre-wrap">{codes[tab]}</pre>
+    <div className="mt-3 grid sm:grid-cols-3 gap-2 text-[13px]">
+      <div className="rounded-xl bg-white/5 border border-white/10 p-3">🔌 <b>CORS:</b> libere o front no FastAPI/Flask</div>
+      <div className="rounded-xl bg-white/5 border border-white/10 p-3">🔑 <b>JWT:</b> login Python → token no React</div>
+      <div className="rounded-xl bg-white/5 border border-white/10 p-3">🌐 <b>.env:</b> <span className="font-mono">VITE_API_URL=http://localhost:8000</span></div>
+    </div>
+  </section>);
+}
+function App(){
+  const [dark,setDark]=useLocalStorage('roadmap-dark',true);
+  const [query,setQuery]=useState('');
+  const [checked,setChecked]=useLocalStorage('roadmap-checked-v2',{});
+  useEffect(()=>{document.documentElement.classList.toggle('dark',dark);
+    document.body.className=dark?'bg-slate-950 text-slate-100 antialiased':'bg-slate-100 text-slate-900 antialiased';},[dark]);
+  const totalCount=useMemo(()=>PHASES.reduce((a,p)=>a+p.topics.length,0),[]);
+  const doneCount=Object.values(checked).filter(Boolean).length;
+  const donePct=totalCount?Math.round(doneCount/totalCount*100):0;
+  const toggleTopic=k=>setChecked(p=>({...p,[k]:!p[k]}));
+  const wrapRef=useReveal([query]);
+  return (<div className="min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-950">
+    <Navbar dark={dark} setDark={setDark} query={query} setQuery={setQuery} total={totalCount} donePct={donePct} />
+    <Hero donePct={donePct} doneCount={doneCount} totalCount={totalCount} onReset={()=>{if(confirm('Resetar todo o progresso?'))setChecked({})}} />
+    <main ref={wrapRef} className="max-w-6xl mx-auto px-4 pb-16 space-y-5">
+      {PHASES.map((ph,i)=><PhaseCard key={i} phase={ph} idx={i} query={query} checked={checked} toggleTopic={toggleTopic} />)}
+      <CodeDemo />
+      <section className="card-reveal rounded-3xl p-6 bg-gradient-to-r from-violet-600 to-indigo-600 shadow-glow">
+        <h3 className="text-xl font-extrabold mb-3">🎓 Dicas de ouro</h3>
+        <ul className="grid sm:grid-cols-2 gap-2 text-sm">{TIPS.map((t,i)=><li key={i} className="bg-white/10 rounded-xl px-3 py-2">✅ {t}</li>)}</ul>
+      </section>
+      <section className="card-reveal text-center glass rounded-3xl p-6">
+        <p className="text-lg font-bold text-yellow-300">🔥 “O segredo não é estudar tudo de uma vez. O segredo é NÃO PARAR.”</p>
+        <p className="text-xs text-slate-400 mt-2 font-mono">React: componentes + hooks + props + estado — este arquivo é um app React real (ReactDOM.createRoot).</p>
+      </section>
+      <footer className="text-center text-xs text-slate-500 pt-4">🐍 Roadmap Python 2.0 — refeito com 💜 em React • <a className="underline" href="python-roadmap.html">ver versão original</a></footer>
+    </main>
+  </div>);
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+
+
+
+
+
+
+
+</script>
+</body>
+</html>

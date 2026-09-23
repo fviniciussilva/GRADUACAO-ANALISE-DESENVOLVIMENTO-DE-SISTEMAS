@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  push:
+    paths:
+      - 'Python/python-roadmap-react-app/**'
+  pull_request:
+    paths:
+      - 'Python/python-roadmap-react-app/**'
+
+defaults:
+  run:
+    working-directory: Python/python-roadmap-react-app
+
+jobs:
+  test-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: Python/python-roadmap-react-app/package-lock.json
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+
